@@ -1,3 +1,26 @@
+<?php
+ include("connection.php");
+
+ $select_query = "SELECT * FROM `tbl_admin`";
+ $select_query_run = mysqli_query($con,$select_query);       
+ $fetch = mysqli_fetch_array($select_query_run);
+ 
+ if(isset($_POST['login_btn'])){
+ $username = $_POST['u_name'];
+ $password = $_POST['pass'];
+
+   if(($fetch['email'] == $username) && ($fetch['password'] == $password)){
+    $_SESSION['admin_loggedin'] = True; 
+    $_SESSION['admin_name'] = $username;
+     header('location:index.php');
+   }
+   else{
+     echo"<script>alert('username and password is not correct plz Try again')</script>";
+   }
+}
+
+
+?>
 <!doctype html>
 <html lang="en" class="semi-dark">
 
@@ -41,15 +64,15 @@
 										<p class="mb-0">Please log in to your account</p>
 									</div>
 									<div class="form-body">
-										<form class="row g-3">
+										<form class="row g-3" method="post"> 
 											<div class="col-12">
 												<label for="inputEmailAddress" class="form-label">Email</label>
-												<input type="email" class="form-control" id="inputEmailAddress" placeholder="jhon@example.com">
+												<input type="email" class="form-control" name="u_name" placeholder="Enter Email">
 											</div>
 											<div class="col-12">
 												<label for="inputChoosePassword" class="form-label">Password</label>
 												<div class="input-group" id="show_hide_password">
-													<input type="password" class="form-control border-end-0" id="inputChoosePassword" value="12345678" placeholder="Enter Password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class='bx bx-hide'></i></a>
+													<input type="password" class="form-control border-end-0" name="pass" placeholder="Enter Password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class='bx bx-hide'></i></a>
 												</div>
 											</div>
 											<div class="col-md-6">
@@ -62,26 +85,26 @@
 											</div>
 											<div class="col-12">
 												<div class="d-grid">
-													<button type="submit" class="btn btn-primary">Sign in</button>
+													<input type="submit" name="login_btn" class="btn btn-primary" value="Sign in">
 												</div>
 											</div>
-											<div class="col-12">
+											<!-- <div class="col-12">
 												<div class="text-center ">
 													<p class="mb-0">Don't have an account yet? <a href="auth-basic-signup.html">Sign up here</a>
 													</p>
 												</div>
-											</div>
+											</div> -->
 										</form>
 									</div>
-									<div class="login-separater text-center mb-5"> <span>OR SIGN IN WITH</span>
+									<!-- <div class="login-separater text-center mb-5"> <span>OR SIGN IN WITH</span>
 										<hr/>
-									</div>
-									<div class="list-inline contacts-social text-center">
+									</div> -->
+									<!-- <div class="list-inline contacts-social text-center">
 										<a href="javascript:;" class="list-inline-item bg-facebook text-white border-0 rounded-3"><i class="bx bxl-facebook"></i></a>
 										<a href="javascript:;" class="list-inline-item bg-twitter text-white border-0 rounded-3"><i class="bx bxl-twitter"></i></a>
 										<a href="javascript:;" class="list-inline-item bg-google text-white border-0 rounded-3"><i class="bx bxl-google"></i></a>
 										<a href="javascript:;" class="list-inline-item bg-linkedin text-white border-0 rounded-3"><i class="bx bxl-linkedin"></i></a>
-									</div>
+									</div> -->
 
 								</div>
 							</div>
