@@ -4,6 +4,39 @@ session_start();
 
 include("./connection/connection.php");
 
+if (isset($_COOKIE["email"]) || !empty($_COOKIE["email"])) {
+    $_SESSION["error"] = "Please login first";
+    header("location:./user/index.php");
+    exit();
+}
+
+if (isset($_POST["submit"])) {
+    $email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
+    $password = $_POST["password"];
+
+    $sql = "SELECT * FROM `tbl_user` WHERE email = ?";
+
+    $stmt = $con->prepare($sql);
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $row = $result->fetch_assoc();
+
+    if ($row) {
+        if (password_verify($password, $row["password"])) {
+            $_SESSION["success"] = "Login successful";
+            setcookie("email", $email, time() + (86400 * 30), "/");
+            header("location:./user/index.php");
+        } else {
+            $_SESSION["error"] = "Password is incorrect";
+            header("location:login.php");
+        }
+    } else {
+        $_SESSION["error"] = "Email is not registered";
+        header("location:login.php");
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -89,7 +122,7 @@ include("./connection/connection.php");
                                                         </g>
                                                     </svg>
                                                 </span>
-                                                <input type="email" class="form-control rounded-2 py-4" placeholder="Enter Your Email" />
+                                                <input type="email" class="form-control rounded-2 py-4" placeholder="Enter Your Email" name="email" />
                                             </div>
                                         </div>
                                         <div class="text-start">
@@ -102,7 +135,7 @@ include("./connection/connection.php");
                                                         <path d="M12 12v2.5" />
                                                     </svg>
                                                 </span>
-                                                <input type="password" class="form-control rounded-2 py-4" placeholder="Password" />
+                                                <input type="password" class="form-control rounded-2 py-4" placeholder="Password" name="password" />
                                             </div>
                                             <div class="form-text mt-2">
                                                 <a href="forgot-password.html" class="text-decoration-none">Forgot
@@ -110,14 +143,14 @@ include("./connection/connection.php");
                                             </div>
                                         </div>
                                         <div class="text-center">
-                                            <button type="submit" class="btn btn-primary-dark w-full py-4">
-                                                Sign In with GenAI
+                                            <button type="submit" name="submit" class="btn btn-primary-dark w-full py-4">
+                                                Sign In
                                             </button>
                                         </div>
                                         <div class="text-center">
                                             <p>
                                                 Don't have an account?
-                                                <a href="register.html" class="text-decoration-none">Sign Up for
+                                                <a href="register.php" class="text-decoration-none">Sign Up for
                                                     Free</a>
                                             </p>
                                         </div>
@@ -139,6 +172,12 @@ include("./connection/connection.php");
     <?php
     if (isset($_SESSION["success"])) {
         echo "<script>toastr.success('" . $_SESSION["success"] . "');</script>";
+        session_unset();
+    }
+
+    if (isset($_SESSION["error"])) {
+        echo "<script>toastr.error('" . $_SESSION["error"] . "');</script>";
+        session_unset();
     }
     ?>
 

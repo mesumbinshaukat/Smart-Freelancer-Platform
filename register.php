@@ -171,7 +171,7 @@ if (isset($_POST["submit"])) {
                                         <div class="text-center">
                                             <p>
                                                 Already have an account?
-                                                <a href="login.html" class="text-decoration-none"> Log in </a>
+                                                <a href="login.php" class="text-decoration-none"> Log in </a>
                                             </p>
                                         </div>
                                     </form>
@@ -201,7 +201,7 @@ if (isset($_POST["submit"])) {
 
     <?php
     if (isset($_SESSION["error"])) {
-        echo "<script>toastr.error('" . $_SESSION["success"] . "');</script>";
+        echo "<script>toastr.error('" . $_SESSION["error"] . "');</script>";
         session_unset();
     }
     ?>
