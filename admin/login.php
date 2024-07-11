@@ -1,22 +1,21 @@
 <?php
- include("connection.php");
+include("../connection/connection.php");
 
- $select_query = "SELECT * FROM `tbl_admin`";
- $select_query_run = mysqli_query($con,$select_query);       
- $fetch = mysqli_fetch_array($select_query_run);
- 
- if(isset($_POST['login_btn'])){
- $username = $_POST['u_name'];
- $password = $_POST['pass'];
+$select_query = "SELECT * FROM `tbl_admin`";
+$select_query_run = mysqli_query($con, $select_query);
+$fetch = mysqli_fetch_array($select_query_run);
 
-   if(($fetch['email'] == $username) && ($fetch['password'] == $password)){
-    $_SESSION['admin_loggedin'] = True; 
-    $_SESSION['admin_name'] = $username;
-     header('location:index.php');
-   }
-   else{
-     echo"<script>alert('username and password is not correct plz Try again')</script>";
-   }
+if (isset($_POST['login_btn'])) {
+	$username = $_POST['u_name'];
+	$password = $_POST['pass'];
+
+	if (($fetch['email'] == $username) && ($fetch['password'] == $password)) {
+		$_SESSION['admin_loggedin'] = True;
+		$_SESSION['admin_name'] = $username;
+		header('location:index.php');
+	} else {
+		echo "<script>alert('username and password is not correct plz Try again')</script>";
+	}
 }
 
 
@@ -64,7 +63,7 @@
 										<p class="mb-0">Please log in to your account</p>
 									</div>
 									<div class="form-body">
-										<form class="row g-3" method="post"> 
+										<form class="row g-3" method="post">
 											<div class="col-12">
 												<label for="inputEmailAddress" class="form-label">Email</label>
 												<input type="email" class="form-control" name="u_name" placeholder="Enter Email">
@@ -125,8 +124,8 @@
 	<script src="assets/plugins/perfect-scrollbar/js/perfect-scrollbar.js"></script>
 	<!--Password show & hide js -->
 	<script>
-		$(document).ready(function () {
-			$("#show_hide_password a").on('click', function (event) {
+		$(document).ready(function() {
+			$("#show_hide_password a").on('click', function(event) {
 				event.preventDefault();
 				if ($('#show_hide_password input').attr("type") == "text") {
 					$('#show_hide_password input').attr('type', 'password');

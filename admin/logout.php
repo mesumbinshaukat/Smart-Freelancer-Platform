@@ -1,5 +1,4 @@
 <?php
-include('connection.php');
+include('../connection/connection.php');
 session_destroy();
 header('location:login.php');
-?>
