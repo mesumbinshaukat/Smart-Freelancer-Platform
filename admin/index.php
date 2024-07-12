@@ -1,6 +1,5 @@
 <?php
 include("../connection/connection.php");
-include("verification.php");
 ?>
 
 <!doctype html>
