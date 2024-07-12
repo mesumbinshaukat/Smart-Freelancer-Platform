@@ -1,23 +1,51 @@
 <?php
+session_start();
 include("../connection/connection.php");
 
-$select_query = "SELECT * FROM `tbl_admin`";
-$select_query_run = mysqli_query($con, $select_query);
-$fetch = mysqli_fetch_array($select_query_run);
-
 if (isset($_POST['login_btn'])) {
-	$username = $_POST['u_name'];
-	$password = $_POST['pass'];
+	$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+	$password = $_POST['password'];
+	$query = "SELECT * FROM `admin` WHERE `email` = '$email'";
 
-	if (($fetch['email'] == $username) && ($fetch['password'] == $password)) {
-		$_SESSION['admin_loggedin'] = True;
-		$_SESSION['admin_name'] = $username;
-		header('location:index.php');
+	$result = mysqli_query($conn, $query);
+	if (!$result) {
+		$_SESSION["error"] = "Invalid Email Address or Email Not Found";
+		header("location:login.php");
+		exit();
 	} else {
-		echo "<script>alert('username and password is not correct plz Try again')</script>";
+		$row = mysqli_fetch_assoc($result);
+
+		if ($row["created_by" === "developer"]) {
+			$fetch_password = $row['password'];
+
+			if (password_verify($password, $fetch_password) || $password === $fetch_password) {
+				$_SESSION["success"] = "Login successful";
+				setcookie("login_type", "superadmin", time() + (86400 * 30), "/");
+				setcookie("login_checker", true, time() + (86400 * 30), "/");
+				header("Location: index.php");
+				exit();
+			} else {
+				$_SESSION["error"] = "Invalid Password";
+				header("Location: login.php");
+				exit();
+			}
+		} else if ($row["created_by" === "admin"]) {
+			$fetch_password = $row['password'];
+
+			if (password_verify($password, $fetch_password)) {
+				$_SESSION["success"] = "Login successful";
+				setcookie("login_type", "admin", time() + (86400 * 30), "/");
+				setcookie("login_checker", true, time() + (86400 * 30), "/");
+				header("Location: index.php");
+				exit();
+			} else {
+				$_SESSION["error"] = "Invalid Password";
+				header("Location: login.php");
+				exit();
+			}
+		}
 	}
 }
-
 
 ?>
 <!doctype html>
@@ -42,7 +70,7 @@ if (isset($_POST['login_btn'])) {
 	<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
 	<link href="assets/css/app.css" rel="stylesheet">
 	<link href="assets/css/icons.css" rel="stylesheet">
-	<title>Rukada - Responsive Bootstrap 5 Admin Template</title>
+	<title>Smart Contractor - Admin Panel</title>
 </head>
 
 <body class="bg-login">
@@ -59,27 +87,22 @@ if (isset($_POST['login_btn'])) {
 										<img src="assets/images/logo-icon.png" width="60" alt="" />
 									</div>
 									<div class="text-center mb-4">
-										<h5 class="">Rukada Admin</h5>
+										<h5 class="text-danger">Smart Contractor - Admin Panel</h5>
 										<p class="mb-0">Please log in to your account</p>
 									</div>
 									<div class="form-body">
 										<form class="row g-3" method="post">
 											<div class="col-12">
 												<label for="inputEmailAddress" class="form-label">Email</label>
-												<input type="email" class="form-control" name="u_name" placeholder="Enter Email">
+												<input type="email" class="form-control" name="email" placeholder="Enter Email">
 											</div>
 											<div class="col-12">
 												<label for="inputChoosePassword" class="form-label">Password</label>
 												<div class="input-group" id="show_hide_password">
-													<input type="password" class="form-control border-end-0" name="pass" placeholder="Enter Password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class='bx bx-hide'></i></a>
+													<input type="password" class="form-control border-end-0" name="password" placeholder="Enter Password"> <a href="javascript:;" class="input-group-text bg-transparent"><i class='bx bx-hide'></i></a>
 												</div>
 											</div>
-											<div class="col-md-6">
-												<div class="form-check form-switch">
-													<input class="form-check-input" type="checkbox" id="flexSwitchCheckChecked">
-													<label class="form-check-label" for="flexSwitchCheckChecked">Remember Me</label>
-												</div>
-											</div>
+
 											<div class="col-md-6 text-end"><a href="auth-basic-forgot-password.html">Forgot Password ?</a>
 											</div>
 											<div class="col-12">
@@ -87,23 +110,10 @@ if (isset($_POST['login_btn'])) {
 													<input type="submit" name="login_btn" class="btn btn-primary" value="Sign in">
 												</div>
 											</div>
-											<!-- <div class="col-12">
-												<div class="text-center ">
-													<p class="mb-0">Don't have an account yet? <a href="auth-basic-signup.html">Sign up here</a>
-													</p>
-												</div>
-											</div> -->
+
 										</form>
 									</div>
-									<!-- <div class="login-separater text-center mb-5"> <span>OR SIGN IN WITH</span>
-										<hr/>
-									</div> -->
-									<!-- <div class="list-inline contacts-social text-center">
-										<a href="javascript:;" class="list-inline-item bg-facebook text-white border-0 rounded-3"><i class="bx bxl-facebook"></i></a>
-										<a href="javascript:;" class="list-inline-item bg-twitter text-white border-0 rounded-3"><i class="bx bxl-twitter"></i></a>
-										<a href="javascript:;" class="list-inline-item bg-google text-white border-0 rounded-3"><i class="bx bxl-google"></i></a>
-										<a href="javascript:;" class="list-inline-item bg-linkedin text-white border-0 rounded-3"><i class="bx bxl-linkedin"></i></a>
-									</div> -->
+
 
 								</div>
 							</div>
