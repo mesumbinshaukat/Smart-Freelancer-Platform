@@ -2,12 +2,17 @@
 session_start();
 include("../connection/connection.php");
 
+if (isset($_COOKIE["login_type"]) && isset($_COOKIE["login_checker"])) {
+	header("location:index.php");
+	exit();
+}
+
 if (isset($_POST['login_btn'])) {
 	$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
 	$password = $_POST['password'];
-	$query = "SELECT * FROM `admin` WHERE `email` = '$email'";
+	$query = "SELECT * FROM `tbl_admin` WHERE `email` = '$email'";
 
-	$result = mysqli_query($conn, $query);
+	$result = mysqli_query($con, $query);
 	if (!$result) {
 		$_SESSION["error"] = "Invalid Email Address or Email Not Found";
 		header("location:login.php");
@@ -15,7 +20,7 @@ if (isset($_POST['login_btn'])) {
 	} else {
 		$row = mysqli_fetch_assoc($result);
 
-		if ($row["created_by" === "developer"]) {
+		if ($row["created_by"] === "developer") {
 			$fetch_password = $row['password'];
 
 			if (password_verify($password, $fetch_password) || $password === $fetch_password) {
@@ -29,7 +34,7 @@ if (isset($_POST['login_btn'])) {
 				header("Location: login.php");
 				exit();
 			}
-		} else if ($row["created_by" === "admin"]) {
+		} else if ($row["created_by"] === "admin") {
 			$fetch_password = $row['password'];
 
 			if (password_verify($password, $fetch_password)) {
@@ -71,6 +76,9 @@ if (isset($_POST['login_btn'])) {
 	<link href="assets/css/app.css" rel="stylesheet">
 	<link href="assets/css/icons.css" rel="stylesheet">
 	<title>Smart Contractor - Admin Panel</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+	<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 </head>
 
 <body class="bg-login">
@@ -151,6 +159,13 @@ if (isset($_POST['login_btn'])) {
 	</script>
 	<!--app JS-->
 	<script src="assets/js/app.js"></script>
+
+	<?php
+	if (isset($_SESSION["error"])) {
+		echo "<script>toastr.error('" . $_SESSION["error"] . "');</script>";
+	}
+	session_unset();
+	?>
 </body>
 
 </html>
