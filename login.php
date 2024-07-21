@@ -26,6 +26,7 @@ if (isset($_POST["submit"])) {
         if (password_verify($password, $row["password"])) {
             $_SESSION["success"] = "Login successful";
             setcookie("email", $email, time() + (86400 * 30), "/");
+            setcookie("user_logged_in_bool", true, time() + (86400 * 30), "/");
             header("location:./user/index.php");
         } else {
             $_SESSION["error"] = "Password is incorrect";
