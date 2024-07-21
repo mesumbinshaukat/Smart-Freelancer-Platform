@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 04, 2024 at 08:22 PM
--- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- Generation Time: Jul 21, 2024 at 05:57 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -35,6 +35,13 @@ CREATE TABLE `tbl_admin` (
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `created_by` varchar(300) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_admin`
+--
+
+INSERT INTO `tbl_admin` (`id`, `name`, `email`, `password`, `created_at`, `created_by`) VALUES
+(1, 'mesum', 'masumbinshaukat@gmail.com', 'hello123', '2024-07-14 20:34:45', 'developer');
 
 -- --------------------------------------------------------
 
@@ -118,6 +125,14 @@ CREATE TABLE `tbl_niche` (
   `cat_name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `tbl_niche`
+--
+
+INSERT INTO `tbl_niche` (`id`, `cat_name`) VALUES
+(1, 'Copywriting'),
+(2, 'Digital Marketing');
+
 -- --------------------------------------------------------
 
 --
@@ -129,13 +144,21 @@ CREATE TABLE `tbl_projects` (
   `project_title` varchar(100) NOT NULL,
   `project_desc` longtext NOT NULL,
   `project_deadline` date NOT NULL,
-  `project_fee` int(11) NOT NULL,
+  `project_fee` varchar(100) NOT NULL,
   `attachments` longtext NOT NULL,
   `cat_id` int(11) NOT NULL,
   `u_id` int(11) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `status` varchar(15) DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_projects`
+--
+
+INSERT INTO `tbl_projects` (`id`, `project_title`, `project_desc`, `project_deadline`, `project_fee`, `attachments`, `cat_id`, `u_id`, `created_at`, `status`) VALUES
+(3, 'Ecommerce Store Marketing', 'I need a digital marketing expert for my ecommerce online store.', '2024-07-31', '0.03', '669d279b26cd6_merged.pdf', 2, 2, '2024-07-21 20:22:03', 'Not Awarded'),
+(4, 'Copywriting Expert Needed Urgent', 'I need a copywriter for my ecommerce site. 1 year experience is required.', '2024-08-30', '0.03', '669d2889a0791_readme.txt', 1, 2, '2024-07-21 20:26:01', 'Not Awarded');
 
 -- --------------------------------------------------------
 
@@ -164,6 +187,14 @@ CREATE TABLE `tbl_user` (
   `dob` date NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `tbl_user`
+--
+
+INSERT INTO `tbl_user` (`id`, `name`, `email`, `password`, `dob`, `created_at`) VALUES
+(1, 'Tester', 'test@gmail.com', '$2y$10$UpFl6IdPtY3UjH5jRJJ3/OWphyuByJgwh3fPJ.heRdZgsBU0JRJgm', '2001-02-25', '2024-07-11 12:48:32'),
+(2, 'Tester 2', 'test2@gmail.com', '$2y$10$7WimviBiyU.BQiPY/a/GQOzUSO/6D0oJdtMFrvV5B5bBxutqdTquq', '2005-08-25', '2024-07-21 18:35:15');
 
 --
 -- Indexes for dumped tables
@@ -253,7 +284,7 @@ ALTER TABLE `tbl_user`
 -- AUTO_INCREMENT for table `tbl_admin`
 --
 ALTER TABLE `tbl_admin`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_banned_user`
@@ -289,13 +320,13 @@ ALTER TABLE `tbl_messages`
 -- AUTO_INCREMENT for table `tbl_niche`
 --
 ALTER TABLE `tbl_niche`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `tbl_projects`
 --
 ALTER TABLE `tbl_projects`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `tbl_project_assigned`
@@ -307,7 +338,7 @@ ALTER TABLE `tbl_project_assigned`
 -- AUTO_INCREMENT for table `tbl_user`
 --
 ALTER TABLE `tbl_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
