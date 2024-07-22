@@ -194,3 +194,9 @@
 </div>
 <!--end switcher-->
 <?php include "./partials/script.php" ?>
+
+<script>
+$(document).ready(function() {
+    $('#menu').metisMenu();
+});
+</script>

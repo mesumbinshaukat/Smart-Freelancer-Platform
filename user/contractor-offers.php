@@ -1,3 +1,19 @@
+<?php
+session_start();
+include("../connection/connection.php");
+
+require __DIR__ . '/partials/fetch_user_details.php';
+
+$user_details = get_user_info($_COOKIE["email"], $con);
+
+if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["user_logged_in_bool"]) || empty($_COOKIE["user_logged_in_bool"])) {
+    $_SESSION["error"] = "Please login first";
+    header("location:../login.php");
+    exit();
+}
+
+?>
+
 <!doctype html>
 <html lang="en" class="semi-dark">
 
