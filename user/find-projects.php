@@ -120,17 +120,17 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
                                 $.each(response, function(index, project) {
                                     projectList += `
                                         <div class="col-12 col-md-6 col-lg-4">
-                                            <div class="card project-card">
-                                                <div class="card-body">
-                                                    <h5 class="card-title text-success">${project.name}</h5>
-                                                    <h6>${project.project_title}</h6>
-                                                    <div class="mb-1 text-muted small">${new Date(project.created_at).toLocaleDateString()}</div>
+                                            <div class="card bg-dark project-card">
+                                                <div class="card-body text-white">
+                                                    <h5 class="card-title text-white">${project.name}</h5>
+                                                    <h6 class="text-white">${project.project_title}</h6>
+                                                    <div class="mb-1 text-white small">${new Date(project.created_at).toLocaleDateString()}</div>
                                                     <p class="card-text">${project.project_desc.substring(0, 150)}...</p>
                                                     <hr>
                                                     <p><strong>Fee:</strong> ${project.project_fee} ETH</p>
                                                     <p><strong>Deadline:</strong> ${new Date(project.project_deadline).toLocaleDateString()}</p>
                                                     <p><strong>Status:</strong> ${project.status}</p>
-                                                    <a href="project-details.php?id=${project.id}" class="btn btn-outline-success">View Details</a>
+                                                    <a href="project-details.php?id=${project.id}" class="btn bg-white text-dark">View Details</a>
                                                 </div>
                                             </div>
                                         </div>
