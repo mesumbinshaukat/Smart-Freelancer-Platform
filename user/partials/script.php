@@ -29,5 +29,5 @@
 <script>
     $(document).ready(function() {
         $('#image-uploadify').imageuploadify();
-    })
+    });
 </script>
