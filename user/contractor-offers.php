@@ -35,7 +35,44 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
         <!--start page wrapper -->
         <div class="page-wrapper">
             <div class="page-content">
-                <!-- CODE GOES HERE -->
+            <div class="card">
+					<div class="card-body">
+						<div class="table-responsive">
+							<table id="example2" class="table table-striped table-bordered">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Contractor Name</th>
+										<th>Proposal</th>
+										<th>Offer Date</th>
+										<th>Offer Price</th>
+										<th>Project Name</th>
+                                        <th>Project Created By</th>
+                                        <th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										
+									</tr>
+									
+								</tbody>
+								<tfoot>
+									<tr>
+                                    <th>#</th>
+										<th>Contractor Name</th>
+										<th>Proposal</th>
+										<th>Offer Date</th>
+										<th>Offer Price</th>
+										<th>Project Name</th>
+                                        <th>Project Created By</th>
+                                        <th>Action</th>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+					</div>
+				</div>
             </div>
         </div>
 
