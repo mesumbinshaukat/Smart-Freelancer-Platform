@@ -114,7 +114,13 @@ if (isset($_POST["submit"])) {
                                 <div class="card-body">
                                     <label class="form-label form-control">Attachments <span
                                             style="color: blue;">(Optional)</span></label>
-                                    <input class="form-control form-control-lg mb-3" type="file" name="attachments">
+                                    <!-- <input class="form-control form-control-lg mb-3" type="file" name="attachments"> -->
+
+
+                                    <input id="image-uploadify" type="file" name="attachments"
+                                        accept=".xlsx,.xls,image/*,.doc,audio/*,.docx,video/*,.ppt,.pptx,.txt,.pdf"
+                                        multiple>
+
                                 </div>
 
                                 <div class="card-body">

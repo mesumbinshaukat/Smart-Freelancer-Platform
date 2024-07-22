@@ -12,14 +12,22 @@
 <script src="assets/plugins/jquery.easy-pie-chart/jquery.easypiechart.min.js"></script>
 <script src="assets/plugins/jquery-knob/excanvas.js"></script>
 <script src="assets/plugins/jquery-knob/jquery.knob.js"></script>
+<script src="assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js"></script>
+
 <script>
-$(function() {
-    $(".knob").knob();
-});
+    $(function() {
+        $(".knob").knob();
+    });
 </script>
 <script src="assets/js/index.js"></script>
 <!--app JS-->
 <script src="assets/js/app.js"></script>
 <script>
-new PerfectScrollbar(".app-container")
+    new PerfectScrollbar(".app-container")
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('#image-uploadify').imageuploadify();
+    })
 </script>

@@ -44,23 +44,23 @@
 
             </ul>
         </li>
-        <!-- <li>
-      <a href="javascript:;" class="has-arrow">
-        <div class="parent-icon"><i class='bx bx-task'></i>
-        </div>
-        <div class="menu-title">Offers & Projects</div>
-      </a>
-      <ul>
-        <li> <a href="offers.php"><i class='bx bx-radio-circle'></i>Your Offers</a>
-        <li> <a href="contractor-offers.php"><i class='bx bx-radio-circle'></i>Offers On Your Projects</a>
-        </li>
-        <li> <a href="my-awarded-projects.php"><i class='bx bx-radio-circle'></i>Your Projects Awarded</a>
-        </li>
-        <li> <a href="projects-awarded.php"><i class='bx bx-radio-circle'></i>Project Awarded To You</a>
-        </li>
+        <li>
+            <a href="javascript:;" class="has-arrow">
+                <div class="parent-icon"><i class='bx bx-task'></i>
+                </div>
+                <div class="menu-title">Offers & Projects</div>
+            </a>
+            <ul>
+                <li> <a href="offers.php"><i class='bx bx-radio-circle'></i>Your Offers</a>
+                <li> <a href="contractor-offers.php"><i class='bx bx-radio-circle'></i>Offers On Your Projects</a>
+                </li>
+                <li> <a href="my-awarded-projects.php"><i class='bx bx-radio-circle'></i>Your Projects Awarded</a>
+                </li>
+                <li> <a href="projects-awarded.php"><i class='bx bx-radio-circle'></i>Project Awarded To You</a>
+                </li>
 
-      </ul>
-    </li> -->
+            </ul>
+        </li>
         <!-- <li>
             <a class="has-arrow" href="javascript:;">
                 <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
