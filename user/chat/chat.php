@@ -1,47 +1,10 @@
-<?php
-session_start();
-include("../connection/connection.php");
-
-require __DIR__ . '/partials/fetch_user_details.php';
-
-$user_details = get_user_info($_COOKIE["email"], $con);
-
-if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["user_logged_in_bool"]) || empty($_COOKIE["user_logged_in_bool"])) {
-    $_SESSION["error"] = "Please login first";
-    header("location:../login.php");
-    exit();
-}
-
-$projects_query = "
-    SELECT p.id as project_id, p.project_title, p.u_id as creator_id, u.name as creator_name, b.id as bid_id, b.bid_letter, b.bid_date, b.bid_price, b.user_id as bidder_id, bu.name as bidder_name
-    FROM tbl_projects p
-    JOIN tbl_bids b ON p.id = b.project_id
-    JOIN tbl_user u ON p.u_id = u.id
-    JOIN tbl_user bu ON b.user_id = bu.id
-    WHERE p.u_id = ?
-";
-$stmt = $con->prepare($projects_query);
-$stmt->bind_param("i", $user_details['id']);
-$stmt->execute();
-$result = $stmt->get_result();
-?>
-
-<!doctype html>
-<html lang="en" class="semi-dark">
-
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <?php include "./partials/head.php" ?>
-    <style>
-        .chat_button{
-
-    border: 1px solid transparent;
-    border-radius: 15px;
-        }
-    </style>
-    <link rel="stylesheet" href="./assets/css/chat.css">
-      <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css">
   <script src="https://www.gstatic.com/firebasejs/6.6.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/6.6.1/firebase-database.js"></script>
   <script>
@@ -60,20 +23,8 @@ $result = $stmt->get_result();
     const app = firebase.initializeApp(firebaseConfig);
   </script>
 </head>
-
 <body>
-    <!--wrapper-->
-    <div class="wrapper">
-        <!--sidebar wrapper -->
-        <?php include("./partials/sidebar.php"); ?>
-        <!--end sidebar wrapper -->
-        <!--start header -->
-        <header>
-            <?php include("./partials/navbar.php"); ?>
-        </header>
-        <!--end header -->
-        <!--start page wrapper -->
-    <section>
+  <section>
     <div class="container-fluid py-2">
       <div class="row">
         <div class="col-lg-9 col-md-9"></div>
@@ -138,79 +89,15 @@ $result = $stmt->get_result();
           </div>
 
           <!-- Button to trigger UsersExample -->
-         
+          <div class="d-flex justify-content-center chat_button" id="chatButton">
+            <a class="d-block" onclick="showUsersExample()" href="#">
+              <i class="fas fa-comment fs-4"></i>
+            </a>
+          </div>
         </div>
       </div>
     </div>
   </section>
-
-        <div class="page-wrapper">
-            <div class="page-content">
-            <div class="card">
-					<div class="card-body">
-						<div class="table-responsive">
-							<table id="example2" class="table table-striped table-bordered">
-								<thead>
-									<tr>
-										<th>#</th>
-										<th>Contractor Name</th>
-										<th>Proposal</th>
-										<th>Offer Date</th>
-										<th>Offer Price</th>
-										<th>Project Name</th>
-                                        <th>Project Created By</th>
-                                        <th>Action</th>
-									</tr>
-								</thead>
-								<tbody>
-
-                                <?php
-                                    if ($result->num_rows > 0) {
-                                        $counter = 1;
-                                        while ($row = $result->fetch_assoc()) {
-                                            echo "<tr>";
-                                            echo "<td>" . $counter++ . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['bidder_name']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['bid_letter']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['bid_date']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['bid_price']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['project_title']) . "</td>";
-                                            echo "<td>" . htmlspecialchars($row['creator_name']) . "</td>";
-                                            echo "<td><div class='d-flex justify-content-center chat_button' id='chatButton'>
-                                            <a class='d-block' onclick='showUsersExample()' href='#'>
-                                              <i class='fas fa-comment fs-4'></i>
-                                            </a>
-                                          </div></td>";
-                                            echo "</tr>";
-                                        }
-                                    } else {
-                                        echo "<tr><td colspan='8' class='text-center'>No offers found</td></tr>";
-                                    }
-                                    ?>
-
-
-                                <!--  -->
-								</tbody>
-								<tfoot>
-									<tr>
-                                    <th>#</th>
-										<th>Contractor Name</th>
-										<th>Proposal</th>
-										<th>Offer Date</th>
-										<th>Offer Price</th>
-										<th>Project Name</th>
-                                        <th>Project Created By</th>
-                                        <th>Action</th>
-									</tr>
-								</tfoot>
-							</table>
-						</div>
-					</div>
-				</div>
-            </div>
-        </div>
-
-      
   <script>
     function showChatButton() {
       document.getElementById('collapseExample').style.display = 'none';
@@ -301,20 +188,6 @@ $result = $stmt->get_result();
       }
     });
   </script>
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script> 
-        <!--end switcher-->
-        <?php include "./partials/last_code.php"; ?>
-        <?php
-        if (isset($_SESSION["success"])) {
-            echo "<script>toastr.success('" . $_SESSION["success"] . "');</script>";
-            unset($_SESSION["success"]);
-        }
-
-        if (isset($_SESSION["error"])) {
-            echo "<script>toastr.error('" . $_SESSION["error"] . "');</script>";
-            unset($_SESSION["error"]);
-        }
-        ?>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
 </body>
-
 </html>

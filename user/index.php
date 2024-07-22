@@ -779,7 +779,6 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
 
 			</div>
 		</div>
-
 		<!--end switcher-->
 		<?php include "./partials/last_code.php"; ?>
 		<?php
