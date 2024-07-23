@@ -32,9 +32,21 @@ if (!$project) {
 
 $is_creator = $project['u_id'] == $user_details['id'];
 
-// Fetch related projects
-$related_projects_query = $con->prepare("SELECT * FROM tbl_projects WHERE cat_id = ? AND id != ?");
-$related_projects_query->bind_param("ii", $project['cat_id'], $project_id);
+// Check if the user has already placed a bid for this project
+$bid_check_query = $con->prepare("SELECT COUNT(*) as bid_count FROM tbl_bids WHERE user_id = ? AND project_id = ?");
+$bid_check_query->bind_param("ii", $user_details['id'], $project_id);
+$bid_check_query->execute();
+$bid_check_result = $bid_check_query->get_result()->fetch_assoc();
+$has_bid = $bid_check_result['bid_count'] > 0;
+
+// Fetch related projects excluding those posted by the current user
+$related_projects_query = $con->prepare("
+    SELECT * FROM tbl_projects 
+    WHERE cat_id = ? 
+    AND id != ? 
+    AND u_id != ?
+");
+$related_projects_query->bind_param("iii", $project['cat_id'], $project_id, $user_details['id']);
 $related_projects_query->execute();
 $related_projects = $related_projects_query->get_result()->fetch_all(MYSQLI_ASSOC);
 
@@ -46,17 +58,17 @@ $related_projects = $related_projects_query->get_result()->fetch_all(MYSQLI_ASSO
 <head>
     <?php include "./partials/head.php" ?>
     <style>
-        .modal-dark .modal-content {
-            background-color: #2c2c2c;
-            color: #fff;
-        }
+    .modal-dark .modal-content {
+        background-color: #2c2c2c;
+        color: #fff;
+    }
 
-        .color-indigators .color-indigator-item {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            cursor: pointer;
-        }
+    .color-indigators .color-indigator-item {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+    }
     </style>
 </head>
 
@@ -110,7 +122,13 @@ $related_projects = $related_projects_query->get_result()->fetch_all(MYSQLI_ASSO
                                 </dl>
                                 <hr>
                                 <?php if (!$is_creator) : ?>
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bidModal">Bid Now</button>
+                                <?php if ($has_bid) : ?>
+                                <button type="button" class="btn btn-secondary" id="bidButton" disabled>You've already
+                                    placed a bid</button>
+                                <?php else : ?>
+                                <button type="button" class="btn btn-primary" id="bidButton" data-bs-toggle="modal"
+                                    data-bs-target="#bidModal">Bid Now</button>
+                                <?php endif; ?>
                                 <?php endif; ?>
                                 <a href="user-profile.php?id=<?php echo $project['u_id']; ?>" class="btn btn-info">View
                                     Creator Profile</a>
@@ -120,23 +138,25 @@ $related_projects = $related_projects_query->get_result()->fetch_all(MYSQLI_ASSO
                 </div>
 
                 <!-- Bid Modal -->
-                <!-- Bid Modal -->
                 <div class="modal fade" id="bidModal" tabindex="-1" aria-hidden="true">
-                    <div class="modal-dialog modal-fullscreen modal-dialog-centered">
+                    <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content bg-dark">
                             <div class="modal-header">
                                 <h5 class="modal-title text-white">Place Your Bid</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
                             </div>
                             <div class="modal-body text-white">
                                 <form id="bidForm">
                                     <div class="mb-3">
                                         <label for="bidPrice" class="form-label">Bid Price (ETH)</label>
-                                        <input type="number" class="form-control" id="bidPrice" name="bid_price" required>
+                                        <input type="number" class="form-control" id="bidPrice" name="bid_price"
+                                            required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="bidLetter" class="form-label">Bid Letter</label>
-                                        <textarea class="form-control" id="bidLetter" name="bid_letter" rows="4" required></textarea>
+                                        <textarea class="form-control" id="bidLetter" name="bid_letter" rows="4"
+                                            required></textarea>
                                     </div>
                                     <input type="hidden" name="project_id" value="<?php echo $project_id; ?>">
                                     <input type="hidden" name="user_id" value="<?php echo $user_details['id']; ?>">
@@ -150,7 +170,6 @@ $related_projects = $related_projects_query->get_result()->fetch_all(MYSQLI_ASSO
                     </div>
                 </div>
 
-
                 <!-- Related Projects -->
                 <div class="card mt-4">
                     <div class="card-header">
@@ -159,17 +178,18 @@ $related_projects = $related_projects_query->get_result()->fetch_all(MYSQLI_ASSO
                     <div class="card-body">
                         <div class="row">
                             <?php foreach ($related_projects as $related_project) : ?>
-                                <div class="col-md-4">
-                                    <div class="card mb-3">
-                                        <div class="card-body">
-                                            <h5 class="card-title">
-                                                <?php echo htmlspecialchars($related_project['project_title']); ?></h5>
-                                            <p class="card-text">
-                                                <?php echo htmlspecialchars($related_project['project_desc']); ?></p>
-                                            <a href="project-details.php?id=<?php echo $related_project['id']; ?>" class="btn btn-primary">View Project</a>
-                                        </div>
+                            <div class="col-md-4">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">
+                                            <?php echo htmlspecialchars($related_project['project_title']); ?></h5>
+                                        <p class="card-text">
+                                            <?php echo htmlspecialchars($related_project['project_desc']); ?></p>
+                                        <a href="project-details.php?id=<?php echo $related_project['id']; ?>"
+                                            class="btn btn-primary">View Project</a>
                                     </div>
                                 </div>
+                            </div>
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -183,26 +203,57 @@ $related_projects = $related_projects_query->get_result()->fetch_all(MYSQLI_ASSO
     <!--end wrapper-->
 
     <script>
-        $(document).ready(function() {
-            $('#submitBid').on('click', function() {
-                var form = $('#bidForm');
-                $.ajax({
-                    url: 'submit_bid.php',
-                    type: 'POST',
-                    data: form.serialize(),
-                    success: function(response) {
+    $(document).ready(function() {
+        $('#submitBid').on('click', function() {
+            var form = $('#bidForm');
+            $.ajax({
+                url: 'submit_bid.php',
+                type: 'POST',
+                data: form.serialize(),
+                success: function(response) {
+                    console.log('Raw response:', response);
+                    try {
                         var result = JSON.parse(response);
+                        console.log('Parsed result:', result);
                         if (result.success) {
                             $('#bidModal').modal('hide');
                             toastr.success('Bid placed successfully');
+                            // Disable bid button and update text
+                            $('#bidButton').prop('disabled', true).removeClass(
+                                'btn-primary').addClass('btn-secondary').text(
+                                "You've already placed a bid");
                         } else {
                             toastr.error(result.error);
                         }
+                    } catch (e) {
+                        $('#bidModal').modal('hide');
+                        toastr.success('Bid placed successfully');
+                        // Disable bid button and update text
+                        $('#bidButton').prop('disabled', true).removeClass('btn-primary')
+                            .addClass('btn-secondary').text("You've already placed a bid");
                     }
-                });
+                },
+                error: function() {
+                    toastr.error('An error occurred while processing your request.');
+                }
             });
         });
+    });
     </script>
+
+    <?php
+    if (isset($_SESSION["success"])) {
+        echo "<script>
+            toastr.success('" . $_SESSION["success"] . "');
+        </script>";
+        unset($_SESSION["success"]);
+    } elseif (isset($_SESSION["error"])) {
+        echo "<script>
+            toastr.error('" . $_SESSION["error"] . "');
+        </script>";
+        unset($_SESSION["error"]);
+    }
+    ?>
 </body>
 
 </html>
