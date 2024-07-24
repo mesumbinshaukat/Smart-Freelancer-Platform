@@ -57,7 +57,7 @@ function showChatButton() {
             <div>
               <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-info">${displayName}: ${messageData.message} &nbsp; <i class="fas fa-trash text-white" data-id="${messageKey}" onclick="deleteMessage(this)"></i></p>     
             </div>
-            <img src="ava2-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
+            <img src="./chat/user.png" alt="avatar 1" style="width: 45px; height: 100%;">
           </div>
         ` : `
           <div class="d-flex flex-row justify-content-start mb-4" id="message-${messageKey}">
