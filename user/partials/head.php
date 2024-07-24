@@ -28,23 +28,27 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.min.css" rel="stylesheet" />
-    <script src="https://www.gstatic.com/firebasejs/6.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/6.6.1/firebase-database.js"></script>
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/7.3.2/mdb.umd.min.js"></script>
+<!-- Firebase App (the core Firebase SDK) -->
+<!-- <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script> -->
+<!-- Firebase Firestore -->
+<!-- <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script> -->
+<!-- Firebase Storage -->
+<!-- <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js"></script> -->
 
-    <script>
-      const firebaseConfig = {
-    apiKey: "AIzaSyANlOE7pgmTKDaBcvbrydbaA3UN4xVl49U",
-    authDomain: "chatsystem-2bd16.firebaseapp.com",
-    databaseURL: "https://chatsystem-2bd16-default-rtdb.firebaseio.com",
-    projectId: "chatsystem-2bd16",
-    storageBucket: "chatsystem-2bd16.appspot.com",
-    messagingSenderId: "522712873535",
-    appId: "1:522712873535:web:c835c34d4114acac22568a"
-  };
+<style>
+    .floating-chat-button {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        background-color: #007bff;
+        color: white;
+        border-radius: 50%;
+        padding: 15px;
+        cursor: pointer;
+        z-index: 1000;
+    }
 
-  // Initialize Firebase
-  const app = firebase.initializeApp(firebaseConfig);
-</script>
+    .floating-chat-button i {
+        font-size: 24px;
+    }
+</style>

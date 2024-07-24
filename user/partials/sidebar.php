@@ -61,6 +61,13 @@
 
             </ul>
         </li>
+        <li>
+            <a href="profile.php">
+                <div class="parent-icon"><i class='bx bx-user'></i>
+                </div>
+                <div class="menu-title">Profile</div>
+            </a>
+        </li>
         <!-- <li>
             <a class="has-arrow" href="javascript:;">
                 <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
