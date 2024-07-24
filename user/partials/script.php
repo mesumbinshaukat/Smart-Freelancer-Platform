@@ -15,19 +15,67 @@
 <script src="assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js"></script>
 
 <script>
-$(function() {
-    $(".knob").knob();
-});
+    $(function() {
+        $(".knob").knob();
+    });
 </script>
 <script src="assets/js/index.js"></script>
 <!--app JS-->
 <script src="assets/js/app.js"></script>
 <script>
-new PerfectScrollbar(".app-container")
+    new PerfectScrollbar(".app-container")
 </script>
 
 <script>
-$(document).ready(function() {
-    $('#image-uploadify').imageuploadify();
-});
+    $(document).ready(function() {
+        $('#image-uploadify').imageuploadify();
+    });
+</script>
+
+<!-- Add this script to your common JavaScript file or directly in the common layout file -->
+<script>
+    document.getElementById('floatingChatButton').addEventListener('click', function() {
+        // Fetch past chats for the logged-in user
+        loadPastChats(userId);
+        // Show the chat modal
+        var chatModal = new bootstrap.Modal(document.getElementById('chatModal'));
+        chatModal.show();
+    });
+
+    async function loadPastChats(userId) {
+        const q = query(
+            collection(db, 'messages'),
+            where('sender_id', '==', userId),
+            orderBy('timestamp', 'asc')
+        );
+
+        onSnapshot(q, (querySnapshot) => {
+            const messages = [];
+            querySnapshot.forEach((doc) => {
+                messages.push(doc.data());
+            });
+            displayMessages(messages);
+        });
+    }
+
+    function displayMessages(messages) {
+        const chatBody = document.getElementById('chatBody');
+        chatBody.innerHTML = '';
+
+        messages.forEach((msg) => {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.innerHTML = `<p>${msg.message}</p>`;
+            if (msg.attachments && msg.attachments.length > 0) {
+                msg.attachments.forEach((url) => {
+                    const attachmentElement = document.createElement('a');
+                    attachmentElement.href = url;
+                    attachmentElement.target = '_blank';
+                    attachmentElement.textContent = 'Attachment';
+                    messageElement.appendChild(attachmentElement);
+                });
+            }
+            chatBody.appendChild(messageElement);
+        });
+    }
 </script>

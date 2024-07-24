@@ -131,7 +131,7 @@ $related_projects = $related_projects_query->get_result()->fetch_all(MYSQLI_ASSO
                                 <?php endif; ?>
                                 <?php endif; ?>
                                 <a href="user-profile.php?id=<?php echo $project['u_id']; ?>" class="btn btn-info">View
-                                    Creator Profile</a>
+                                    Client Profile</a>
                             </div>
                         </div>
                     </div>
