@@ -17,7 +17,7 @@
     }
     .btn-submit {
     background-color: transparent; 
-    color: #50ABC8; /* white text */
+    color: #50ABC8; 
     border: none;
     padding: 10px;
     font-size: 17px;
@@ -25,7 +25,7 @@
     }
     
     .btn-submit:hover {
-    background-color: transparent; /* darker green on hover */
+    background-color: transparent; 
     }
     .collapse{
         box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
@@ -33,4 +33,37 @@
     }
     .user_list:hover{
         cursor: pointer;
+    }
+
+
+    #collapseExample {
+        position: absolute;
+        top: 50px;
+        right: 20px;
+        width: 100%;
+        max-width: 400px; /* adjust width as needed */
+        height: 100%;
+        max-height: 1200px !important; /* adjust height as needed */
+        z-index: 1050;
+        box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+        background-color: white; /* ensure it's visible */
+        overflow: none; /* hide overflow */
+        display: none; /* initially hidden */
+    }
+    
+    #collapseExample .card-body {
+        position: relative;
+        height: calc(100% - 100px); /* adjust for header and footer */
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    
+    #collapseExample .card-footer {
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        background-color: white; /* ensure it's visible */
+    }
+    .container-fluid, .row {
+        height: 100%; /* Ensure full height for parent containers */
     }

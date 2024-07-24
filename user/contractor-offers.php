@@ -73,76 +73,43 @@ $result = $stmt->get_result();
         </header>
         <!--end header -->
         <!--start page wrapper -->
-    <section>
-    <div class="container-fluid py-2">
-      <div class="row">
+        <div class="container-fluid py-2">
+    <div class="row">
         <div class="col-lg-9 col-md-9"></div>
         <div class="col-lg-3 col-md-3 col-sm-12">
-
-          <!-- Collapsed content -->
-          <div class="collapse mt-4" id="collapseExample" style="display: none;">
-            <div class="card" id="chat4">
-              <div class="card-header d-flex justify-content-between align-items-center p-3" style="border-top: 4px solid #3B71CA;">
-                <a class="d-block" onclick="showUsersExample()" href="#">
-                  <i class="fa fa-arrow-left fs-5"></i>
-                </a>
-                <h5 class="mb-0">Usernames</h5>
-                <div class="d-flex flex-row align-items-center">
-                  <span class="badge bg-primary me-3">20</span>
-                  <a class="d-block" onclick="showChatButton()" href="#">
-                    <i class="fas fa-times text-muted fs-5"></i>
-                  </a>
+            <div class="collapse mt-4" id="collapseExample" style="display: none;">
+                <!-- Chat Card Content -->
+                <div class="card" id="chat4">
+                    <div class="card-header d-flex justify-content-between align-items-center p-3" style="border-top: 4px solid #3B71CA;">
+                        <a class="d-block" onclick="showChatButton()" href="#">
+                            <i class="fa fa-arrow-left fs-5"></i>
+                        </a>
+                        <h5 class="mb-0">Usernames</h5>
+                        <div class="d-flex flex-row align-items-center">
+                            <a class="d-block" onclick="showChatButton()" href="#">
+                                <i class="fas fa-times text-muted fs-5"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body" style="position:relative; height: 450px; overflow-y: auto; overflow-x: hidden;">
+                        <div id="userMessages"></div>
+                    </div>
+                    <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
+                        <img src="./chat/ava5-bg.webp" alt="avatar 3" style="width: 40px; height: 100%;">
+                        <input type="text" class="form-control form-control-lg" id="message" placeholder="Type message">
+                        <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
+                        <button type="button" onclick="sendMessage()" class="btn-submit">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
                 </div>
-              </div>
-              <div class="card-body" style="position:relative; height: 420px; overflow-y: auto; overflow-x: hidden;">
-                <div id="userMessages"></div>
-              </div>
-              <div class="card-footer text-muted d-flex justify-content-start align-items-center p-3">
-                <img src="ava5-bg.webp" alt="avatar 3" style="width: 40px; height: 100%;">
-                <input type="text" class="form-control form-control-lg" id="message" placeholder="Type message">
-                <a class="ms-1 text-muted" href="#!"><i class="fas fa-paperclip"></i></a>
-                <a class="ms-3 text-muted" href="#!"><i class="fas fa-smile"></i></a>
-                <button type="button" onclick="sendMessage()" class="btn-submit">
-                  <i class="fas fa-paper-plane"></i>
-                </button>
-              </div>
             </div>
-          </div>
-
-          <div class="collapse mt-4" id="UsersExample" style="display: none;">
-            <div class="card" id="chat4">
-              <div class="card-header d-flex justify-content-between align-items-center p-3" style="border-top: 4px solid #3B71CA;">
-                
-                <h5 class="mb-0">Users</h5>
-                <div class="d-flex flex-row align-items-center">
-                  <a class="d-block" onclick="showChatButton()" href="#">
-                    <i class="fas fa-times text-muted fs-5"></i>
-                  </a>
-                </div>
-              </div>
-              <div class="card-body" style="position:relative; height: 500px; overflow-y: auto; overflow-x: hidden;">
-                <div class="row user_list" onclick="showCollapseExample()">
-                  <div class="d-flex justify-content-between align-items-center w-100">
-                      <div class="d-flex align-items-center">
-                          <img src="ava5-bg.webp" alt="avatar 3" style="width: 40px; height: 40px;">
-                          <p class="px-3 mb-0">hello</p>
-                      </div>
-                      <div class="d-flex align-items-center">
-                          <span class="badge bg-primary mx-2">20</span>
-                          <i class="fas fa-chevron-right"></i>
-                      </div>
-                  </div>
-              </div>
-              </div>
+            <div class="chat_button" id="chatButton" onclick="showCollapseExample()">
+                <i class="fas fa-comment fs-4"></i>
             </div>
-          </div>
-
-          <!-- Button to trigger UsersExample -->
-         
         </div>
-      </div>
     </div>
-  </section>
+</div>
 
         <div class="page-wrapper">
             <div class="page-content">
@@ -177,10 +144,13 @@ $result = $stmt->get_result();
                                             echo "<td>" . htmlspecialchars($row['project_title']) . "</td>";
                                             echo "<td>" . htmlspecialchars($row['creator_name']) . "</td>";
                                             echo "<td><div class='d-flex justify-content-center chat_button' id='chatButton'>
-                                            <a class='d-block' onclick='showUsersExample()' href='#'>
+                                            <a class='d-block' onclick='showCollapseExample()' href='#'>
                                               <i class='fas fa-comment fs-4'></i>
                                             </a>
-                                          </div></td>";
+                                            
+                                            </div>
+                                            <span class='badge bg-primary mx-2'>20</span>
+                                          </td>";
                                             echo "</tr>";
                                         }
                                     } else {
@@ -212,31 +182,15 @@ $result = $stmt->get_result();
 
       
   <script>
-    function showChatButton() {
-      document.getElementById('collapseExample').style.display = 'none';
-      document.getElementById('UsersExample').style.display = 'none';
-      document.getElementById('chatButton').style.display = 'flex';
-    }
+      function showChatButton() {
+    document.getElementById('collapseExample').style.display = 'none';
+    document.getElementById('chatButton').style.display = 'flex';
+}
 
-    function showUsersExample() {
-      var collapseExample = document.getElementById('collapseExample');
-    var usersExample = document.getElementById('UsersExample');
-    var chatButton = document.getElementById('chatButton');
-
-    // Toggle collapseExample and UsersExample
-    collapseExample.style.display = collapseExample.style.display === 'block' ? 'none' : 'none';
-    usersExample.style.display = usersExample.style.display === 'none' ? 'block' : 'none';
-
-    // Toggle chatButton visibility
-    chatButton.style.display = chatButton.style.display === 'none' ? 'block' : 'none';
-    }
-
-    function showCollapseExample() {
-      document.getElementById('collapseExample').style.display = 'block';
-      document.getElementById('UsersExample').style.display = 'none';
-      document.getElementById('chatButton').style.display = 'none';
-    }
-
+      function showCollapseExample() {
+    document.getElementById('collapseExample').style.display = 'block';
+    document.getElementById('chatButton').style.display = 'none';
+}
     var myName = "rafay";
     var ReceiverName = "sad";
 
@@ -271,7 +225,7 @@ $result = $stmt->get_result();
               <div>
                 <p class="small p-2 me-3 mb-1 text-white rounded-3 bg-info">${displayName}: ${messageData.message} &nbsp; <i class="fas fa-trash text-white" data-id="${messageKey}" onclick="deleteMessage(this)"></i></p>     
               </div>
-              <img src="ava2-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
+              <img src="./chat/ava5-bg.webp" alt="avatar 1" style="width: 45px; height: 100%;">
             </div>
           ` : `
             <div class="d-flex flex-row justify-content-start mb-4" id="message-${messageKey}">
