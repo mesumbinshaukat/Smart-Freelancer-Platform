@@ -93,17 +93,7 @@ $result = $stmt->get_result();
 
                                 <!--  -->
 								</tbody>
-								<tfoot>
-									<tr>
-                                    <th>#</th>
-										<th>Contractor Name</th>
-										<th>Proposal</th>
-										<th>Offer Date</th>
-										<th>Offer Price</th>
-										<th>Project Name</th>
-                                        <th>Project Created By</th>
-									</tr>
-								</tfoot>
+								
 							</table>
 						</div>
 					</div>
@@ -126,7 +116,7 @@ $result = $stmt->get_result();
             unset($_SESSION["error"]);
         }
         ?>
-                         <script src="./assets/js/chat.js"></script>
+        <script src="./assets/js/chat.js"></script>
 
 </body>
 
