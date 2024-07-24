@@ -54,6 +54,7 @@ if (isset($_POST["submit"])) {
 
 <head>
     <?php include "./partials/head.php" ?>
+    <link rel="stylesheet" href="./chat/style.css">
 </head>
 
 <body>
@@ -70,6 +71,8 @@ if (isset($_POST["submit"])) {
         <!--start page wrapper -->
         <div class="page-wrapper">
             <div class="page-content">
+            <?php include("chat/chat.php")?>
+
                 <div class="row">
                     <div class="col-xl-9 mx-auto">
                         <h6 class="mb-0 text-uppercase">Create New Project</h6>
@@ -143,6 +146,7 @@ if (isset($_POST["submit"])) {
         ?>
     </div>
     <!--end wrapper-->
+    <script src="./assets/js/chat.js"></script>     
 </body>
 
 </html>
