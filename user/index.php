@@ -19,7 +19,6 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
 
 <head>
 	<?php include ("./partials/head.php") ?>
-	<link rel="stylesheet" href="./chat/style.css">
 
 </head>
 
@@ -38,7 +37,6 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
 		<!--start page wrapper -->
 		<div class="page-wrapper">
 			<div class="page-content">
-				<?php include("chat/chat.php")?>
 
 				<div class="row row-cols-1 row-cols-md-2 row-cols-xl-4">
 					<div class="col">
@@ -784,7 +782,6 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
 			</div>
 		</div>
 		<!--end switcher-->
-		<script src="./assets/js/chat.js"></script>      
 		<?php include "./partials/last_code.php"; ?>
 		<?php
 		if (isset($_SESSION["success"])) {

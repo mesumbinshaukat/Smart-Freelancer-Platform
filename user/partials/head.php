@@ -28,12 +28,12 @@
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
-<!-- Firebase App (the core Firebase SDK) -->
-<!-- <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script> -->
-<!-- Firebase Firestore -->
-<!-- <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script> -->
-<!-- Firebase Storage -->
-<!-- <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js"></script> -->
+ <!-- <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app.js"></script>
+ <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore.js"></script> 
+<script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage.js"></script> -->
+
+
+
 
 <style>
     .floating-chat-button {
