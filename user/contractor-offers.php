@@ -29,41 +29,41 @@ $result = $stmt->get_result();
 <html lang="en" class="semi-dark">
 
 <head>
-    <?php include "./partials/head.php" ?>
+  <?php include "./partials/head.php" ?>
 </head>
 
 <body>
-    <!--wrapper-->
-    <div class="wrapper">
-        <!--sidebar wrapper -->
-        <?php include("./partials/sidebar.php"); ?>
-        <!--end sidebar wrapper -->
-        <!--start header -->
-        <header>
-            <?php include("./partials/navbar.php"); ?>
-        </header>
-        <!--end header -->
-        <!--start page wrapper -->
-        <div class="page-wrapper">
-            <div class="page-content">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="example2" class="table table-striped table-bordered text-center">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Contractor Name</th>
-                                        <th>Proposal</th>
-                                        <th>Offer Date</th>
-                                        <th>Offer Price</th>
-                                        <th>Project Name</th>
-                                        <th>Project Created By</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php
+  <!--wrapper-->
+  <div class="wrapper">
+    <!--sidebar wrapper -->
+    <?php include("./partials/sidebar.php"); ?>
+    <!--end sidebar wrapper -->
+    <!--start header -->
+    <header>
+      <?php include("./partials/navbar.php"); ?>
+    </header>
+    <!--end header -->
+    <!--start page wrapper -->
+    <div class="page-wrapper">
+      <div class="page-content">
+        <div class="card">
+          <div class="card-body">
+            <div class="table-responsive">
+              <table id="example2" class="table table-striped table-bordered text-center">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Contractor Name</th>
+                    <th>Proposal</th>
+                    <th>Offer Date</th>
+                    <th>Offer Price</th>
+                    <th>Project Name</th>
+                    <th>Project Created By</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php
                   if ($result->num_rows > 0) {
                     $counter = 1;
                     while ($row = $result->fetch_assoc()) {
@@ -82,57 +82,56 @@ $result = $stmt->get_result();
                     echo "<tr><td colspan='8' class='text-center'>No offers found</td></tr>";
                   }
                   ?>
-                                </tbody>
-                                <tfoot>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Contractor Name</th>
-                                        <th>Proposal</th>
-                                        <th>Offer Date</th>
-                                        <th>Offer Price</th>
-                                        <th>Project Name</th>
-                                        <th>Project Created By</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
-                </div>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <th>#</th>
+                    <th>Contractor Name</th>
+                    <th>Proposal</th>
+                    <th>Offer Date</th>
+                    <th>Offer Price</th>
+                    <th>Project Name</th>
+                    <th>Project Created By</th>
+                    <th>Action</th>
+                  </tr>
+                </tfoot>
+              </table>
             </div>
+          </div>
         </div>
-        <!--end page wrapper -->
+      </div>
     </div>
-    <!--end wrapper-->
+    <!--end page wrapper -->
+  </div>
+  <!--end wrapper-->
 
-    <!-- Chat Modal -->
-    <div class="modal fade" id="chatModal" tabindex="-1" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content bg-dark">
-                <div class="modal-header">
-                    <h5 class="modal-title text-white">Chat</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body text-white" id="chatBody">
-                    <!-- Chat messages will be appended here -->
-                </div>
-                <div class="modal-footer">
-                    <input type="file" id="chatAttachment" accept=".zip,image/*" style="display:none;">
-                    <button type="button" class="btn btn-light"
-                        onclick="document.getElementById('chatAttachment').click();">Attach</button>
-                    <input type="text" class="form-control" id="chatMessage" placeholder="Type message">
-                    <button type="button" class="btn btn-dark" onclick="sendMessage()">Send</button>
-                </div>
-            </div>
+  <!-- Chat Modal -->
+  <div class="modal fade" id="chatModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title text-white">Chat</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
+        <div class="modal-body text-white" id="chatBody">
+          <!-- Chat messages will be appended here -->
+        </div>
+        <div class="modal-footer">
+          <input type="file" id="chatAttachment" accept=".zip,image/*" style="display:none;">
+          <button type="button" class="btn btn-light" onclick="document.getElementById('chatAttachment').click();">Attach</button>
+          <input type="text" class="form-control" id="chatMessage" placeholder="Type message">
+          <button type="button" class="btn btn-dark" onclick="sendMessage()">Send</button>
+        </div>
+      </div>
     </div>
+  </div>
 
-    <?php include "./partials/last_code.php"; ?>
-    <script type="module" src="chat.js"></script>
-    <script>
+  <?php include "./partials/last_code.php"; ?>
+  <script type="module" src="chat.js"></script>
+  <script>
     const userId = <?php echo json_encode($user_details['id']); ?>;
-    </script>
-    <?php
+  </script>
+  <?php
   if (isset($_SESSION["success"])) {
     echo "<script>toastr.success('" . $_SESSION["success"] . "');</script>";
     unset($_SESSION["success"]);
@@ -148,8 +147,8 @@ $result = $stmt->get_result();
 </html>
 
 <style>
-.modal-dark .modal-content {
+  .modal-dark .modal-content {
     background-color: #2c2c2c;
     color: #fff;
-}
+  }
 </style>
