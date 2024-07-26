@@ -25,7 +25,6 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
             margin-bottom: 20px;
         }
     </style>
-    	<link rel="stylesheet" href="./chat/style.css">
 
 </head>
 
@@ -43,7 +42,6 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
         <!--start page wrapper -->
         <div class="page-wrapper">
             <div class="page-content">
-            <?php include("chat/chat.php")?>
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
@@ -165,7 +163,6 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
                 });
             });
         </script>
-          <script src="./assets/js/chat.js"></script>      
     </div>
 </body>
 
