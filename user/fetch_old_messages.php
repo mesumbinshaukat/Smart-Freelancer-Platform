@@ -1,29 +1,65 @@
 <?php
-session_start();
+
 include("../connection/connection.php");
+require __DIR__ . '/partials/fetch_user_details.php';
 
-header('Content-Type: application/json');
+$user_details = get_user_info($_COOKIE["email"], $con);
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $sender_id = $_POST['sender_id'];
-    $receiver_id = $_POST['receiver_id'];
 
-    $stmt = $con->prepare("SELECT `message`, `attachments`, `date_time` FROM `tbl_messages` WHERE (`freelancer_id` = ? AND `client_id` = ?) OR (`freelancer_id` = ? AND `client_id` = ?) ORDER BY timestamp ASC");
-    $stmt->bind_param("iiii", $sender_id, $receiver_id, $receiver_id, $sender_id);
+// APPWRITE
+require_once realpath(__DIR__ . '/../vendor/autoload.php');
 
-    if ($stmt->execute()) {
-        $result = $stmt->get_result();
+$dotenv = Dotenv\Dotenv::createImmutable(realpath(__DIR__ . '/..'));
+$dotenv->load();
 
-        $messages = [];
-        while ($row = $result->fetch_assoc()) {
-            $messages[] = $row;
+use Appwrite\Client;
+use Appwrite\Services\Databases;
+use Appwrite\ID;
+use Appwrite\Query;
+
+$client = new Client();
+
+$client
+    ->setEndpoint('https://cloud.appwrite.io/v1') // Your Appwrite Endpoint
+    ->setProject($_ENV["project_id"]) // Your project ID
+    ->setKey($_ENV["api_key"]); // Your secret API key
+
+$databases = new Databases($client);
+
+try {
+    $messages = $databases->listDocuments(
+        $_ENV["database_id"],
+        $_ENV["collection_id"],
+        [
+            // Messages will be sorted in descending order by their timestamp
+            Query::orderDesc("timestamp"),
+
+        ]
+    );
+
+    foreach ($messages["documents"] as $message) {
+        $sender_id = $message["sender_id"];
+        $receiver_id = $message["receiver_id"];
+        $timestamp = $message["timestamp"];
+        $message = empty($message["message"]) ? null : $message["message"];
+        $attachments = empty($message["attachments"]) ? null : json_decode($message["attachments"], true);
+
+
+        if ($sender_id == $user_details["id"]) {
+
+            echo "<div class='d-flex flex-row justify-content-end mb-4'>";
+            echo "<div class='chat-message me-3 bg-body-tertiary border' id='senderMsg'>";
+            echo "<p class='small mb-0'>" . $message . "</p>";
+            echo "</div>";
+            echo "</div>";
+        } else {
+            echo "<div class='d-flex flex-row justify-content-start mb-4'>";
+            echo "<div class='chat-message ms-3' style='background-color: rgba(57, 192, 237, 0.2);'>";
+            echo "<p class='small mb-0'>" . $message . "</p>";
+            echo "</div>";
+            echo "</div>";
         }
-        $stmt->close();
-
-        echo json_encode($messages);
-    } else {
-        echo json_encode(['error' => 'Failed to fetch messages']);
     }
-} else {
-    echo json_encode(['error' => 'Invalid request method']);
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
 }

@@ -1,16 +1,16 @@
 // Appwrite
 
-import { Client, Databases, Storage, Query } from 'https://cdn.jsdelivr.net/npm/appwrite@latest/dist/appwrite.min.js';
+// import { Client, Databases, Storage, Query } from 'https://cdn.jsdelivr.net/npm/appwrite@latest/dist/appwrite.min.js';
 
-const client = new Client();
-client
-  .setEndpoint('https://cloud.appwrite.io/v1') // Your Appwrite Endpoint
-  .setProject('66a31105000e5d6cf43b'); // Your project ID
+// const client = new Client();
+// client
+//   .setEndpoint('https://cloud.appwrite.io/v1') // Your Appwrite Endpoint
+//   .setProject('66a31105000e5d6cf43b'); // Your project ID
 
-const databases = new Databases(client);
-const storage = new Storage(client);
+// const databases = new Databases(client);
+// const storage = new Storage(client);
 
-export { databases, storage, Query };
+// export { databases, storage, Query };
 
 
 

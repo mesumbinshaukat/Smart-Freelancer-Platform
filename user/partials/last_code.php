@@ -3,29 +3,7 @@
     <i class='bx bx-message-dots'></i>
 </div>
 
-<!-- Add your common footer code here -->
-<!-- Chat Modal -->
-<!-- <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg modal-dark">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="chatModalLabel">Chat</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="chatBody" style="max-height: 400px; overflow-y: auto;"></div>
-            </div>
-            <div class="modal-footer">
-                <input type="text" id="chatMessage" class="form-control" placeholder="Type a message" />
-                <input type="file" id="chatAttachment" class="form-control" />
-                <button type="button" class="btn btn-primary" onclick="sendMessage()">Send</button>
-            </div>
-        </div>
-    </div>
-</div>
- -->
-<!-- User List Modal -->
-<!-- <div class="modal fade" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel" aria-hidden="true">
+<div class="modal fade" id="userListModal" tabindex="-1" aria-labelledby="userListModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -33,13 +11,34 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div id="userList"></div>
+                <!-- User List Container -->
+                <div class="container user-list-container">
+                    <div class="row justify-content-center">
+                        <div class="col-12">
+                            <div class="card user-list-card">
+                                <div
+                                    class="card-header user-list-header d-flex justify-content-between align-items-center">
+                                    <i class="fas fa-angle-left"></i>
+                                    <p class="mb-0 fw-bold">Users</p>
+                                    <i class="fas fa-times"></i>
+                                </div>
+                                <div class="card-body">
+                                    <div id="userList" class="d-flex flex-column">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- End of User List Container -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
-</div> -->
-
-
+</div>
 
 
 <!--end page wrapper -->
@@ -54,6 +53,7 @@
 </footer>
 </div>
 <!--end wrapper-->
+
 
 
 <!-- search modal -->

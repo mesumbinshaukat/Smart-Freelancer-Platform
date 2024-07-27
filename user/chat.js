@@ -164,148 +164,148 @@
 
 
 // APPWRITE
-import { databases, storage, Query } from './config.js';
+// import { databases, storage, Query } from './config.js';
 
-let currentSenderId;
-let currentReceiverId;
-let messagesLoaded = false;
-let messagesListener;
+// let currentSenderId;
+// let currentReceiverId;
+// let messagesLoaded = false;
+// let messagesListener;
 
-async function sendMessage() {
-    const message = document.getElementById('chatMessage').value;
-    const attachment = document.getElementById('chatAttachment').files[0];
-    const senderId = currentSenderId;
-    const receiverId = currentReceiverId;
+// async function sendMessage() {
+//     const message = document.getElementById('chatMessage').value;
+//     const attachment = document.getElementById('chatAttachment').files[0];
+//     const senderId = currentSenderId;
+//     const receiverId = currentReceiverId;
 
-    let attachmentURL = '';
+//     let attachmentURL = '';
 
-    if (attachment) {
-        const file = new File([attachment], attachment.name, { type: attachment.type });
-        const response = await storage.createFile('66a31d9c000cdbc060d5', 'unique()', file);
-        attachmentURL = storage.getFileView(response['$id']);
-    }
+//     if (attachment) {
+//         const file = new File([attachment], attachment.name, { type: attachment.type });
+//         const response = await storage.createFile('66a31d9c000cdbc060d5', 'unique()', file);
+//         attachmentURL = storage.getFileView(response['$id']);
+//     }
 
-    const newMessage = {
-        message,
-        sender_id: senderId,
-        receiver_id: receiverId,
-        timestamp: new Date().toISOString(),
-        attachments: attachmentURL ? [attachmentURL] : []
-    };
+//     const newMessage = {
+//         message,
+//         sender_id: senderId,
+//         receiver_id: receiverId,
+//         timestamp: new Date().toISOString(),
+//         attachments: attachmentURL ? [attachmentURL] : []
+//     };
 
-    await databases.createDocument('66a3113700066de4ba03', '66a3115a0032675f11eb', newMessage);
+//     await databases.createDocument('66a3113700066de4ba03', '66a3115a0032675f11eb', newMessage);
 
-    document.getElementById('chatMessage').value = '';
-    document.getElementById('chatAttachment').value = '';
-}
+//     document.getElementById('chatMessage').value = '';
+//     document.getElementById('chatAttachment').value = '';
+// }
 
-function loadMessages(senderId, receiverId) {
-    if (messagesLoaded) return;
+// function loadMessages(senderId, receiverId) {
+//     if (messagesLoaded) return;
 
-    const senderQuery = databases.listDocuments('66a3113700066de4ba03', '66a3115a0032675f11eb', [
-        Query.equal('sender_id', senderId),
-        Query.equal('receiver_id', receiverId),
-        Query.orderAsc('timestamp')
-    ]);
+//     const senderQuery = databases.listDocuments('66a3113700066de4ba03', '66a3115a0032675f11eb', [
+//         Query.equal('sender_id', senderId),
+//         Query.equal('receiver_id', receiverId),
+//         Query.orderAsc('timestamp')
+//     ]);
 
-    const receiverQuery = databases.listDocuments('66a3113700066de4ba03', '66a3115a0032675f11eb', [
-        Query.equal('sender_id', receiverId),
-        Query.equal('receiver_id', senderId),
-        Query.orderAsc('timestamp')
-    ]);
+//     const receiverQuery = databases.listDocuments('66a3113700066de4ba03', '66a3115a0032675f11eb', [
+//         Query.equal('sender_id', receiverId),
+//         Query.equal('receiver_id', senderId),
+//         Query.orderAsc('timestamp')
+//     ]);
 
-    Promise.all([senderQuery, receiverQuery]).then(([senderMessages, receiverMessages]) => {
-        const messages = [...senderMessages.documents, ...receiverMessages.documents];
-        displayMessages(messages);
-    });
+//     Promise.all([senderQuery, receiverQuery]).then(([senderMessages, receiverMessages]) => {
+//         const messages = [...senderMessages.documents, ...receiverMessages.documents];
+//         displayMessages(messages);
+//     });
 
-    messagesLoaded = true;
-}
+//     messagesLoaded = true;
+// }
 
-function displayMessages(messages) {
-    const chatBody = document.getElementById('chatBody');
-    chatBody.innerHTML = '';
+// function displayMessages(messages) {
+//     const chatBody = document.getElementById('chatBody');
+//     chatBody.innerHTML = '';
 
-    messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+//     messages.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
 
-    messages.forEach((msg) => {
-        const messageElement = document.createElement('div');
-        messageElement.classList.add('message');
-        messageElement.innerHTML = `<p><strong>${msg.sender_name}:</strong> ${msg.message}</p>`;
-        if (msg.attachments && msg.attachments.length > 0) {
-            msg.attachments.forEach((url) => {
-                const attachmentElement = document.createElement('a');
-                attachmentElement.href = url;
-                attachmentElement.target = '_blank';
-                attachmentElement.textContent = 'Attachment';
-                messageElement.appendChild(attachmentElement);
-            });
-        }
-        chatBody.appendChild(messageElement);
-    });
-}
+//     messages.forEach((msg) => {
+//         const messageElement = document.createElement('div');
+//         messageElement.classList.add('message');
+//         messageElement.innerHTML = `<p><strong>${msg.sender_name}:</strong> ${msg.message}</p>`;
+//         if (msg.attachments && msg.attachments.length > 0) {
+//             msg.attachments.forEach((url) => {
+//                 const attachmentElement = document.createElement('a');
+//                 attachmentElement.href = url;
+//                 attachmentElement.target = '_blank';
+//                 attachmentElement.textContent = 'Attachment';
+//                 messageElement.appendChild(attachmentElement);
+//             });
+//         }
+//         chatBody.appendChild(messageElement);
+//     });
+// }
 
-async function fetchUserInteractions(userId) {
-    const usersQuery = databases.listDocuments('66a3113700066de4ba03', '66a3115a0032675f11eb', [
-        Query.equal('sender_id', userId)
-    ]);
+// async function fetchUserInteractions(userId) {
+//     const usersQuery = databases.listDocuments('66a3113700066de4ba03', '66a3115a0032675f11eb', [
+//         Query.equal('sender_id', userId)
+//     ]);
 
-    const querySnapshot = await usersQuery;
+//     const querySnapshot = await usersQuery;
 
-    const userSet = new Set();
+//     const userSet = new Set();
 
-    querySnapshot.documents.forEach((doc) => {
-        const message = doc;
-        if (message.receiver_id !== userId) {
-            userSet.add(message.receiver_id);
-        } else {
-            userSet.add(message.sender_id);
-        }
-    });
+//     querySnapshot.documents.forEach((doc) => {
+//         const message = doc;
+//         if (message.receiver_id !== userId) {
+//             userSet.add(message.receiver_id);
+//         } else {
+//             userSet.add(message.sender_id);
+//         }
+//     });
 
-    const userListDiv = document.getElementById('userList');
-    userListDiv.innerHTML = '';
+//     const userListDiv = document.getElementById('userList');
+//     userListDiv.innerHTML = '';
 
-    userSet.forEach(user => {
-        const userElement = document.createElement('div');
-        userElement.textContent = `User ID: ${user}`;
-        userElement.addEventListener('click', () => {
-            currentReceiverId = user;
-            loadMessages(currentSenderId, currentReceiverId);
-            $('#userListModal').modal('hide');
-            $('#chatModal').modal('show');
-        });
-        userListDiv.appendChild(userElement);
-    });
-}
+//     userSet.forEach(user => {
+//         const userElement = document.createElement('div');
+//         userElement.textContent = `User ID: ${user}`;
+//         userElement.addEventListener('click', () => {
+//             currentReceiverId = user;
+//             loadMessages(currentSenderId, currentReceiverId);
+//             $('#userListModal').modal('hide');
+//             $('#chatModal').modal('show');
+//         });
+//         userListDiv.appendChild(userElement);
+//     });
+// }
 
-function initChat(senderId, receiverId) {
-    currentSenderId = senderId;
-    currentReceiverId = receiverId;
-    loadMessages(senderId, receiverId);
-}
+// function initChat(senderId, receiverId) {
+//     currentSenderId = senderId;
+//     currentReceiverId = receiverId;
+//     loadMessages(senderId, receiverId);
+// }
 
-function initUserList() {
-    fetchUserInteractions(currentSenderId);
-}
+// function initUserList() {
+//     fetchUserInteractions(currentSenderId);
+// }
 
-document.addEventListener('DOMContentLoaded', function() {
-    const sendButton = document.getElementById('sendButton');
-    if (sendButton) {
-        sendButton.addEventListener('click', sendMessage);
-    }
+// document.addEventListener('DOMContentLoaded', function() {
+//     const sendButton = document.getElementById('sendButton');
+//     if (sendButton) {
+//         sendButton.addEventListener('click', sendMessage);
+//     }
 
-    const userListModal = document.getElementById('userListModal');
-    if (userListModal) {
-        userListModal.addEventListener('show.bs.modal', initUserList);
-    }
+//     const userListModal = document.getElementById('userListModal');
+//     if (userListModal) {
+//         userListModal.addEventListener('show.bs.modal', initUserList);
+//     }
 
-    const chatModal = document.getElementById('chatModal');
-    if (chatModal) {
-        chatModal.addEventListener('show.bs.modal', () => {
-            loadMessages(currentSenderId, currentReceiverId);
-        });
-    }
-});
+//     const chatModal = document.getElementById('chatModal');
+//     if (chatModal) {
+//         chatModal.addEventListener('show.bs.modal', () => {
+//             loadMessages(currentSenderId, currentReceiverId);
+//         });
+//     }
+// });
 
-export { initChat, initUserList, sendMessage, loadMessages };
+// export { initChat, initUserList, sendMessage, loadMessages };

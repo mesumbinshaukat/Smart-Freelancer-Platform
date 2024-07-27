@@ -6,7 +6,7 @@
 <!--plugins-->
 <link href="assets/plugins/vectormap/jquery-jvectormap-2.0.2.css" rel="stylesheet" />
 <link href="assets/plugins/simplebar/css/simplebar.css" rel="stylesheet" />
-<link href="assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" />
+<!-- <link href="assets/plugins/perfect-scrollbar/css/perfect-scrollbar.css" rel="stylesheet" /> -->
 <link href="assets/plugins/metismenu/css/metisMenu.min.css" rel="stylesheet" />
 <link href="assets/plugins/Drag-And-Drop/dist/imageuploadify.min.css" rel="stylesheet" />
 
@@ -45,5 +45,42 @@
 
 .floating-chat-button i {
     font-size: 24px;
+}
+
+.chat-container {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.chat-body {
+    max-height: 50vh;
+    overflow-y: auto;
+    margin-bottom: 15px;
+}
+
+.chat-textarea {
+    margin-top: 15px;
+}
+
+.chat-message {
+    padding: 10px;
+    border-radius: 10px;
+}
+
+.chat-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.card-footer {
+    border-top: 1px solid #dee2e6;
+    background-color: #f8f9fa;
+}
+
+
+.list-group-item:hover {
+    background-color: black !important;
+    color: white !important;
+    border: none !important;
 }
 </style>
