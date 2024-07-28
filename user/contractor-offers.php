@@ -103,46 +103,26 @@ $result = $stmt->get_result();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
                     <div class="container chat-container">
                         <div class="row justify-content-center">
                             <div class="col-12">
                                 <div class="card chat-card">
-
-                                    <div class="card-body chat-body" id="chatBody">
-                                        <!-- Mock Chat Messages -->
-                                        <div class="d-flex flex-row justify-content-start mb-4">
-                                            <div class="chat-message ms-3"
-                                                style="background-color: rgba(57, 192, 237, 0.2);">
-                                                <p class="small mb-0">Hello, how can I help you today?</p>
-                                            </div>
-                                        </div>
-                                        <div class="d-flex flex-row justify-content-end mb-4">
-                                            <div class="chat-message me-3 bg-body-tertiary border" id="senderMsg">
-                                                <p class="small mb-0">I have a question about your services.</p>
-                                            </div>
-                                        </div>
-                                        
+                                    <div class="card-body chat-body chat-body-' . $row['bid_id'] . '" id="chatBody_' . $row['bid_id'] . '">
                                     </div>
                                     <div class="card-footer">
-                                        <form id="chatForm" >
-                                        <input type="hidden" name="client_id" value="' . $user_details['id'] . '">
+                                        <form class="chat-form" data-bid-id="' . $row['bid_id'] . '" data-contractor-id="' . $row['bidder_id'] . '">
+                                            <input type="hidden" name="client_id" value="' . $user_details['id'] . '">
                                             <input type="hidden" name="contractor_id" value="' . $row['bidder_id'] . '">
                                             <div class="form-outline chat-textarea">
-
-                                                <textarea class="form-control bg-body-tertiary" id="chatMessage"
-                                                    rows="3" name="chatMessage"></textarea>
-                                                <label class="form-label" for="chatMessage">Type your message</label>
+                                                <textarea class="form-control bg-body-tertiary" name="chatMessage" rows="3"></textarea>
+                                                <label class="form-label">Type your message</label>
                                             </div>
                                             <div class="d-flex justify-content-end mt-2">
-                                                <input type="file" class="form-control" name="chatAttachment"
-                                                    id="chatAttachment">
+                                                <input type="file" class="form-control" name="chatAttachment">
                                             </div>
                                             <div class="d-flex justify-content-end mt-2">
-                                                <button type="button" class="btn btn-secondary me-2"
-                                                    data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary"
-                                                    id="sendButton">Send</button>
+                                                <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-primary send-button" data-bid-id="' . $row['bid_id'] . '" data-contractor-id="' . $row['bidder_id'] . '">Send</button>
                                             </div>
                                         </form>
                                     </div>
@@ -150,7 +130,6 @@ $result = $stmt->get_result();
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -187,78 +166,85 @@ $result = $stmt->get_result();
 
     <!-- <script src="chat.js" type="module"></script> -->
     <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const floatingChatButton = document.getElementById('floatingChatButton');
-        if (floatingChatButton) {
-            floatingChatButton.addEventListener('click', function() {
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const floatingChatButton = document.getElementById('floatingChatButton');
+            if (floatingChatButton) {
+                floatingChatButton.addEventListener('click', function() {
 
-                $('#userListModal').modal('show');
-            });
-        }
-    });
-
-
-
-    $(document).ready(function() {
-        $("#sendButton").click(function() {
-            var chatForm = $('#chatForm');
-            $.ajax({
-                type: 'POST',
-                url: 'send_messages.php',
-                // contentType: 'multipart/form-data',
-                data: chatForm.serialize(),
-                success: function(response) {
-                    console.log(response);
-                    try {
-                        var data = typeof response === "string" ? JSON.parse(response) :
-                            response;
-                        if (data.success) {
-                            // toastr.success(data.message);
-                            chatForm[0].reset();
-                        } else {
-                            toastr.error(data.message);
-                        }
-                    } catch (err) {
-                        console.log("Catch Error:" + err.message);
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log("Error:" + textStatus + " | " + errorThrown);
-                }
-            });
+                    $('#userListModal').modal('show');
+                });
+            }
         });
 
-        function fetchOldMessages() {
-            $.ajax({
-                type: 'GET',
-                url: 'fetch_old_messages.php',
-                success: function(response) {
-                    $("#userList").html(response);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert("Error:" + textStatus + " | " + errorThrown);
-                }
+
+
+        $(document).ready(function() {
+            $('.send-button').click(function() {
+                alert("clicked");
+                var contractorId = $(this).data('contractor-id');
+                var chatForm = $('form[data-contractor-id="' + contractorId + '"]');
+                $.ajax({
+                    type: 'POST',
+                    url: 'send_messages.php',
+                    data: chatForm.serialize(),
+                    success: function(response) {
+                        console.log(response);
+                        try {
+                            var data = typeof response === "string" ? JSON.parse(response) :
+                                response;
+                            if (data.success) {
+                                chatForm[0].reset();
+                                fetchOldMessages(contractorId);
+                            } else {
+                                toastr.error(data.message);
+                            }
+                        } catch (err) {
+                            console.log("Catch Error:" + err.message);
+                        }
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        console.log("Error:" + textStatus + " | " + errorThrown);
+                    }
+                });
             });
-        }
 
-        fetchOldMessages();
+            function fetchOldMessages(contractorId) {
+                $.ajax({
+                    type: 'GET',
+                    url: 'fetch_old_messages.php',
+                    data: {
+                        contractor_id: contractorId
+                    },
+                    success: function(response) {
+                        $('#chatBody_' + contractorId).html(response);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("Error:" + textStatus + " | " + errorThrown);
+                    }
+                });
+            }
 
-        function fetchUsers() {
-            $.ajax({
-                type: 'GET',
-                url: 'fetch_users.php',
-                success: function(response) {
-                    $("#userList").html(response);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert("Error:" + textStatus + " | " + errorThrown);
-                }
+            $('body').on('show.bs.modal', '.modal', function() {
+                var contractorId = $(this).find('.send-button').data('contractor-id');
+                fetchOldMessages(contractorId);
             });
-        }
 
-        fetchUsers();
+            function fetchUsers() {
+                $.ajax({
+                    type: 'GET',
+                    url: 'fetch_users.php',
+                    success: function(response) {
+                        $("#userList").html(response);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                        alert("Error:" + textStatus + " | " + errorThrown);
+                    }
+                });
+            }
 
-    });
+            fetchUsers();
+
+        });
     </script>
 </body>
 

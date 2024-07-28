@@ -5,7 +5,6 @@ require __DIR__ . '/partials/fetch_user_details.php';
 
 $user_details = get_user_info($_COOKIE["email"], $con);
 
-
 // APPWRITE
 require_once realpath(__DIR__ . '/../vendor/autoload.php');
 
@@ -29,40 +28,61 @@ $databases = new Databases($client);
 $id = (int) $user_details["id"];
 
 try {
-    $related_projects_query = $databases->listDocuments(
+    $messages = $databases->listDocuments(
         $_ENV["database_id"],
         $_ENV["collection_id"],
         [
-            // Messages will be sorted in descending order by their timestamp
             Query::orderDesc("timestamp"),
-            Query::search("receiver_id", filter_var($id, FILTER_SANITIZE_NUMBER_INT)),
-            Query::search("sender_id", filter_var($id, FILTER_SANITIZE_NUMBER_INT)),
+            Query::or([Query::equal("receiver_id", $id), Query::equal("sender_id", $id)]),
         ]
     );
 
-    foreach ($user["documents"] as $document) {
-        $select_user_query = "SELECT * FROM `tbl_user` WHERE id = '" . $document["sender_id"] . "'";
-        $select->mysqli_query($con, $select_user_query);
-        $user = $select->mysqli_fetch_array($select->mysqli_query($con, $select_user_query));
-        echo '<ul class="list-group">
+    $fetchedUsers = [];
 
-                                            <li class="list-group-item bg-dark">
-                                                <a id="' . $document["receiver_id"] . '" href="javascript:;" class="list-group-item-action fs-6 bg-light">
-                                                    <div class="row align-items-center">
-                                                        <div class="col-6">
-                                                            <p class="mb-1 text-light fs-4">' . $user["name"] . '</p>
-                                                        </div>
-                                                        <div class="col-6 text-end"><i class="bx bx-message-dots text-light fs-4"></i></div>
+    foreach ($messages["documents"] as $document) {
+        $sender_id = $document["sender_id"];
+        $receiver_id = $document["receiver_id"];
 
-                                                    </div>
+        if ($sender_id != $id && !in_array($sender_id, $fetchedUsers)) {
+            $fetchedUsers[] = $sender_id;
+            $select_user_query = "SELECT * FROM `tbl_user` WHERE `id` = '{$sender_id}'";
+            $result = mysqli_query($con, $select_user_query);
+            if ($user = mysqli_fetch_assoc($result)) {
+                echo '<ul class="list-group">
+                        <li class="list-group-item bg-dark">
+                            <a id="' . htmlspecialchars($receiver_id) . '" href="javascript:;" class="list-group-item-action fs-6 bg-light">
+                                <div class="row align-items-center">
+                                    <div class="col-6">
+                                        <p class="mb-1 text-light fs-4">' . htmlspecialchars($user["name"]) . '</p>
+                                    </div>
+                                    <div class="col-6 text-end"><i class="bx bx-message-dots text-light fs-4"></i></div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>';
+            }
+        }
 
-
-                                                </a>
-                                            </li>
-
-                                        </ul>';
+        if ($receiver_id != $id && !in_array($receiver_id, $fetchedUsers)) {
+            $fetchedUsers[] = $receiver_id;
+            $select_user_query = "SELECT * FROM `tbl_user` WHERE `id` = '{$receiver_id}'";
+            $result = mysqli_query($con, $select_user_query);
+            if ($user = mysqli_fetch_assoc($result)) {
+                echo '<ul class="list-group">
+                        <li class="list-group-item bg-dark">
+                            <a id="' . htmlspecialchars($receiver_id) . '" href="javascript:;" class="list-group-item-action fs-6 bg-light">
+                                <div class="row align-items-center">
+                                    <div class="col-6">
+                                        <p class="mb-1 text-light fs-4">' . htmlspecialchars($user["name"]) . '</p>
+                                    </div>
+                                    <div class="col-6 text-end"><i class="bx bx-message-dots text-light fs-4"></i></div>
+                                </div>
+                            </a>
+                        </li>
+                    </ul>';
+            }
+        }
     }
 } catch (\Exception $e) {
-
     echo $e->getMessage();
 }

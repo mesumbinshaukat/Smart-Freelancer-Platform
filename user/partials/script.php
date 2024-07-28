@@ -15,25 +15,25 @@
 <script src="assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js"></script>
 
 <script>
-    $(function() {
-        $(".knob").knob();
-    });
+$(function() {
+    $(".knob").knob();
+});
 </script>
 <script src="assets/js/index.js"></script>
 <!--app JS-->
 <script src="assets/js/app.js"></script>
 <script>
-    new PerfectScrollbar(".app-container")
+new PerfectScrollbar(".app-container")
 </script>
 
 <script>
-    $(document).ready(function() {
-        $('#image-uploadify').imageuploadify();
-    });
+$(document).ready(function() {
+    $('#image-uploadify').imageuploadify();
+});
 </script>
 
 <!-- Add this script to your common JavaScript file or directly in the common layout file -->
-<script>
+<!-- <script>
     document.getElementById('floatingChatButton').addEventListener('click', function() {
         // Fetch past chats for the logged-in user
         loadPastChats(userId);
@@ -78,4 +78,4 @@
             chatBody.appendChild(messageElement);
         });
     }
-</script>
+</script> -->
