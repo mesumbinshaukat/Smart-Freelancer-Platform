@@ -27,9 +27,17 @@ $response = array();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-    $message = (string) $_POST['chatMessage'];
-    $contractor_id = (int) $_POST['contractor_id'];
-    $client_id = (int) $_POST['client_id'];
+    $message = isset($_POST['chatMessage']) ? trim($_POST['chatMessage']) : '';
+    $contractor_id = isset($_POST['contractor_id']) ? (int)$_POST['contractor_id'] : 0;
+    $client_id = isset($_POST['client_id']) ? (int)$_POST['client_id'] : 0;
+
+    if (empty($message) && empty($_FILES['chatAttachment']['name'])) {
+        $response['success'] = false;
+        $response['message'] = "Message cannot be empty!";
+        echo json_encode($response);
+        exit();
+    }
+
     $attachments = empty($_FILES['chatAttachment']['name']) ? null : json_encode($_FILES['chatAttachment']['name']);
     $attachments_tmp = empty($_FILES['chatAttachment']['tmp_name']) ? null : json_encode($_FILES['chatAttachment']['tmp_name']);
 

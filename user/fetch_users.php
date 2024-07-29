@@ -50,7 +50,7 @@ try {
             if ($user = mysqli_fetch_assoc($result)) {
                 echo '<ul class="list-group">
                         <li class="list-group-item bg-dark">
-                            <a id="' . htmlspecialchars($receiver_id) . '" href="javascript:;" class="list-group-item-action fs-6 bg-light">
+                            <a id="user_' . htmlspecialchars($receiver_id) . '" href="javascript:;" class="list-group-item-action fs-6 bg-light">
                                 <div class="row align-items-center">
                                     <div class="col-6">
                                         <p class="mb-1 text-light fs-4">' . htmlspecialchars($user["name"]) . '</p>

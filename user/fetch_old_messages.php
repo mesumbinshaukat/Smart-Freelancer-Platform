@@ -11,7 +11,7 @@ if (!isset($_GET['contractor_id']) || empty($_GET['contractor_id'])) {
     exit();
 }
 
-$contractor_id = intval($_GET['contractor_id']);
+$contractor_id = (int) intval($_GET['contractor_id']);
 
 // APPWRITE
 require_once realpath(__DIR__ . '/../vendor/autoload.php');
@@ -33,23 +33,25 @@ $client
 $databases = new Databases($client);
 
 try {
+    $user_id = (int) $user_details["id"];
+
     $messages = $databases->listDocuments(
         $_ENV["database_id"],
         $_ENV["collection_id"],
         [
-            Query::equal("sender_id", [$user_details["id"], $contractor_id]),
-            Query::equal("receiver_id", [$user_details["id"], $contractor_id]),
+            Query::equal("sender_id", [$user_id, $contractor_id]),
+            Query::equal("receiver_id", [$user_id, $contractor_id]),
             Query::orderAsc("timestamp"), // Sort by timestamp in ascending order
         ]
     );
 
     foreach ($messages["documents"] as $message) {
-        $sender_id = $message["sender_id"];
+        $sender_id = (int) $message["sender_id"];
         $timestamp = $message["timestamp"];
         $message_content = empty($message["message"]) ? null : htmlspecialchars($message["message"]);
         $attachments = empty($message["attachments"]) ? null : json_decode($message["attachments"], true);
 
-        if ($sender_id == $user_details["id"]) {
+        if ($sender_id == $user_id) {
             echo "<div class='d-flex flex-row justify-content-end mb-4'>";
             echo "<div class='chat-message me-3 bg-body-tertiary border' id='senderMsg'>";
             echo "<p class='small mb-0'>" . $message_content . "</p>";

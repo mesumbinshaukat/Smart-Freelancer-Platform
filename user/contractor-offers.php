@@ -22,8 +22,6 @@ $client
 
 $databases = new Databases($client);
 
-
-
 // BASIC PHP CODE
 $user_details = get_user_info($_COOKIE["email"], $con);
 
@@ -51,7 +49,6 @@ $result = $stmt->get_result();
 
 <head>
     <?php include "./partials/head.php" ?>
-
 </head>
 
 <body>
@@ -91,7 +88,7 @@ $result = $stmt->get_result();
                                             echo "<td>" . htmlspecialchars($row['bid_price']) . " ETH</td>";
                                             echo "<td>" . htmlspecialchars($row['project_title']) . "</td>";
                                             echo "<td>" . htmlspecialchars($user_details['name']) . "</td>";
-                                            echo "<td><button class='btn btn-light' data-bs-toggle='modal' data-bs-target='#chatModal_" . $row['bid_id'] . "'><i class='bx bx-message-dots'></i></button></td>";
+                                            echo "<td><button class='btn btn-light chat-button' data-bs-toggle='modal' data-bs-target='#chatModal_" . $row['bid_id'] . "' data-contractor-id='" . $row['bidder_id'] . "'><i class='bx bx-message-dots'></i></button></td>";
                                             echo "</tr>";
 
                                             echo '
@@ -107,7 +104,7 @@ $result = $stmt->get_result();
                         <div class="row justify-content-center">
                             <div class="col-12">
                                 <div class="card chat-card">
-                                    <div class="card-body chat-body chat-body-' . $row['bid_id'] . '" id="chatBody_' . $row['bid_id'] . '">
+                                    <div class="card-body chat-body" id="chatBody_' . $row['bid_id'] . '">
                                     </div>
                                     <div class="card-footer">
                                         <form class="chat-form" data-bid-id="' . $row['bid_id'] . '" data-contractor-id="' . $row['bidder_id'] . '">
@@ -161,32 +158,30 @@ $result = $stmt->get_result();
         </div>
     </div>
 
-
     <?php include("./partials/last_code.php") ?>
 
-    <!-- <script src="chat.js" type="module"></script> -->
     <script>
         document.addEventListener('DOMContentLoaded', (event) => {
             const floatingChatButton = document.getElementById('floatingChatButton');
             if (floatingChatButton) {
                 floatingChatButton.addEventListener('click', function() {
-
                     $('#userListModal').modal('show');
                 });
             }
         });
 
-
-
         $(document).ready(function() {
             $('.send-button').click(function() {
-                alert("clicked");
                 var contractorId = $(this).data('contractor-id');
                 var chatForm = $('form[data-contractor-id="' + contractorId + '"]');
+                var formData = new FormData(chatForm[0]);
+
                 $.ajax({
                     type: 'POST',
                     url: 'send_messages.php',
-                    data: chatForm.serialize(),
+                    data: formData,
+                    processData: false,
+                    contentType: false,
                     success: function(response) {
                         console.log(response);
                         try {
@@ -194,7 +189,7 @@ $result = $stmt->get_result();
                                 response;
                             if (data.success) {
                                 chatForm[0].reset();
-                                fetchOldMessages(contractorId);
+                                fetchOldMessages(contractorId, chatForm.data('bid-id'));
                             } else {
                                 toastr.error(data.message);
                             }
@@ -208,7 +203,7 @@ $result = $stmt->get_result();
                 });
             });
 
-            function fetchOldMessages(contractorId) {
+            function fetchOldMessages(contractorId, bidId) {
                 $.ajax({
                     type: 'GET',
                     url: 'fetch_old_messages.php',
@@ -216,7 +211,7 @@ $result = $stmt->get_result();
                         contractor_id: contractorId
                     },
                     success: function(response) {
-                        $('#chatBody_' + contractorId).html(response);
+                        $('#chatBody_' + bidId).html(response);
                     },
                     error: function(jqXHR, textStatus, errorThrown) {
                         alert("Error:" + textStatus + " | " + errorThrown);
@@ -226,7 +221,11 @@ $result = $stmt->get_result();
 
             $('body').on('show.bs.modal', '.modal', function() {
                 var contractorId = $(this).find('.send-button').data('contractor-id');
-                fetchOldMessages(contractorId);
+                var bidId = $(this).find('.send-button').data('bid-id');
+                fetchOldMessages(contractorId, bidId);
+                setInterval(function() {
+                    fetchOldMessages(contractorId, bidId);
+                }, 100);
             });
 
             function fetchUsers() {
@@ -243,7 +242,6 @@ $result = $stmt->get_result();
             }
 
             fetchUsers();
-
         });
     </script>
 </body>
