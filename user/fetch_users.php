@@ -38,6 +38,14 @@ try {
     );
 
     $fetchedUsers = [];
+    $userBids = []; // Store bid IDs associated with users
+
+    // Fetch bid IDs for each user
+    $bids_query = "SELECT id, user_id FROM tbl_bids";
+    $bids_result = mysqli_query($con, $bids_query);
+    while ($bid = mysqli_fetch_assoc($bids_result)) {
+        $userBids[$bid['user_id']] = $bid['id'];
+    }
 
     foreach ($messages["documents"] as $document) {
         $sender_id = $document["sender_id"];
@@ -48,16 +56,17 @@ try {
             $select_user_query = "SELECT * FROM `tbl_user` WHERE `id` = '{$sender_id}'";
             $result = mysqli_query($con, $select_user_query);
             if ($user = mysqli_fetch_assoc($result)) {
+                $bid_id = isset($userBids[$sender_id]) ? $userBids[$sender_id] : 0;
                 echo '<ul class="list-group">
                         <li class="list-group-item bg-dark">
-                            <a id="user_' . htmlspecialchars($receiver_id) . '" href="javascript:;" class="list-group-item-action fs-6 bg-light">
+                            <div class="list-group-item-action fs-6 bg-dark user-item" data-contractor-id="' . $sender_id . '" data-bid-id="' . $bid_id . '">
                                 <div class="row align-items-center">
                                     <div class="col-6">
                                         <p class="mb-1 text-light fs-4">' . htmlspecialchars($user["name"]) . '</p>
                                     </div>
                                     <div class="col-6 text-end"><i class="bx bx-message-dots text-light fs-4"></i></div>
                                 </div>
-                            </a>
+                            </div>
                         </li>
                     </ul>';
             }
@@ -68,16 +77,17 @@ try {
             $select_user_query = "SELECT * FROM `tbl_user` WHERE `id` = '{$receiver_id}'";
             $result = mysqli_query($con, $select_user_query);
             if ($user = mysqli_fetch_assoc($result)) {
+                $bid_id = isset($userBids[$receiver_id]) ? $userBids[$receiver_id] : 0;
                 echo '<ul class="list-group">
                         <li class="list-group-item bg-dark">
-                            <a id="' . htmlspecialchars($receiver_id) . '" href="javascript:;" class="list-group-item-action fs-6 bg-light">
+                            <div class="list-group-item-action fs-6 bg-dark user-item" data-contractor-id="' . $receiver_id . '" data-bid-id="' . $bid_id . '">
                                 <div class="row align-items-center">
                                     <div class="col-6">
                                         <p class="mb-1 text-light fs-4">' . htmlspecialchars($user["name"]) . '</p>
                                     </div>
                                     <div class="col-6 text-end"><i class="bx bx-message-dots text-light fs-4"></i></div>
                                 </div>
-                            </a>
+                            </div>
                         </li>
                     </ul>';
             }
