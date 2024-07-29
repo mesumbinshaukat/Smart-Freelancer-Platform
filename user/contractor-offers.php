@@ -486,24 +486,12 @@ $result = $stmt->get_result();
                                 }
                             }, 'json');
                         }
-                    }).on('error', function(error) {
-                        console.error('Error during transaction:', error);
-                        if (error.message.includes('User denied transaction signature')) {
-                            alert('Transaction was denied. Please try again.');
-                        } else {
-                            alert('An error occurred. Please try again.');
-                        }
-                    });
+                    }).on('error', console.error);
                 } catch (error) {
-                    console.error('Error accessing MetaMask:', error);
-                    if (error.code === 4001) {
-                        alert('User denied account access. Please allow access to proceed.');
-                    } else {
-                        alert('An error occurred. Please try again.');
-                    }
+                    console.error('User denied account access or other error:', error);
                 }
             } else {
-                alert('MetaMask is not installed. Please install MetaMask to proceed.');
+                console.error('MetaMask is not installed');
             }
         });
     });
