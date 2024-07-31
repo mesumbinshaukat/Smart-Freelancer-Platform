@@ -7,8 +7,8 @@ if (!isset($_POST['bid_id']) || !isset($_POST['contractor_id'])) {
     exit();
 }
 
-$bid_id = $_POST['bid_id'];
-$contractor_id = $_POST['contractor_id'];
+$bid_id = (int) $_POST['bid_id'];
+$contractor_id = (int) $_POST['contractor_id'];
 
 // Fetch project ID from bid ID
 $query = "SELECT project_id FROM tbl_bids WHERE id = ?";
@@ -23,7 +23,7 @@ if (!$project) {
     exit();
 }
 
-$project_id = $project['project_id'];
+$project_id = (int) $project['project_id'];
 
 // Update project status to awarded
 $query = "UPDATE tbl_projects SET status = 'awarded' WHERE id = ?";
@@ -34,7 +34,7 @@ $stmt->execute();
 // Insert into tbl_project_assigned
 $query = "INSERT INTO tbl_project_assigned (project_id,  user_id) VALUES (?, ?)";
 $stmt = $con->prepare($query);
-$stmt->bind_param("i", $project_id, $contractor_id);
+$stmt->bind_param("ii", $project_id, $contractor_id);
 $stmt->execute();
 
 echo json_encode(['success' => true, 'message' => 'Project awarded successfully']);

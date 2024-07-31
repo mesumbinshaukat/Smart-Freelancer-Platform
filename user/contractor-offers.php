@@ -48,8 +48,8 @@ $result = $stmt->get_result();
 <html lang="en" class="semi-dark">
 
 <head>
-    <script src=" https://cdn.jsdelivr.net/npm/web3@4.11.1/dist/web3.min.js "></script>
     <?php include "./partials/head.php" ?>
+
 </head>
 
 <body>
@@ -90,7 +90,7 @@ $result = $stmt->get_result();
                                             echo "<td>" . htmlspecialchars($row['bid_price']) . " ETH</td>";
                                             echo "<td>" . htmlspecialchars($row['project_title']) . "</td>";
                                             echo "<td>" . htmlspecialchars($user_details['name']) . "</td>";
-                                            echo "<td><button class='btn btn-primary award-project-btn' data-bid-id='" . $row['bid_id'] . "' data-bid-price='" . $row['bid_price'] . "' data-contractor-id='" . $row['bidder_id'] . "'>Award</button></td>";
+                                            echo "<td><button class='btn btn-primary award-project-btn' data-project-id='" . $row['project_id'] . "' data-bid-price='" . $row['bid_price'] . "' data-contractor-id='" . $row['bidder_id'] . "'>Award</button></td>";
                                             echo "<td><button class='btn btn-light chat-button' data-bs-toggle='modal' data-bs-target='#chatModal_" . $row['bid_id'] . "' data-bid-id='" . $row['bid_id'] . "' data-contractor-id='" . $row['bidder_id'] . "'><i class='bx bx-message-dots'></i></button></td>";
                                             echo "</tr>";
 
@@ -161,8 +161,6 @@ $result = $stmt->get_result();
         </div>
     </div>
 
-    <?php include("./partials/last_code.php") ?>
-
     <!-- Award Project Modal -->
     <div class="modal fade" id="awardProjectModal" tabindex="-1" aria-labelledby="awardProjectModalLabel"
         aria-hidden="true">
@@ -174,7 +172,7 @@ $result = $stmt->get_result();
                 </div>
                 <div class="modal-body">
                     <p>Are you sure you want to award this project?</p>
-                    <input type="hidden" id="modal-bid-id">
+                    <input type="hidden" id="modal-project-id">
                     <input type="hidden" id="modal-bid-price">
                     <input type="hidden" id="modal-contractor-id">
                 </div>
@@ -185,6 +183,9 @@ $result = $stmt->get_result();
             </div>
         </div>
     </div>
+
+    <?php include("./partials/last_code.php") ?>
+    <script src="../node_modules/web3/dist/web3.min.js"></script>
 
     <script>
     document.addEventListener('DOMContentLoaded', (event) => {
@@ -251,7 +252,7 @@ $result = $stmt->get_result();
             fetchOldMessages(contractorId, bidId);
             setInterval(function() {
                 fetchOldMessages(contractorId, bidId);
-            }, 100);
+            }, 500);
         });
 
         $('body').on('click', '.user-item', function() {
@@ -276,38 +277,31 @@ $result = $stmt->get_result();
         }
 
         fetchUsers();
-    });
-    </script>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const awardButtons = document.querySelectorAll('.award-project-btn');
-        awardButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const bidId = this.getAttribute('data-bid-id');
-                const bidPrice = this.getAttribute('data-bid-price');
-                const contractorId = this.getAttribute('data-contractor-id');
-                document.getElementById('modal-bid-id').value = bidId;
-                document.getElementById('modal-bid-price').value = bidPrice;
-                document.getElementById('modal-contractor-id').value = contractorId;
-                const awardModal = new bootstrap.Modal(document.getElementById(
-                    'awardProjectModal'));
-                awardModal.show();
-            });
+        $('.award-project-btn').click(function() {
+            $('#modal-project-id').val($(this).data('project-id'));
+            $('#modal-bid-price').val($(this).data('bid-price'));
+            $('#modal-contractor-id').val($(this).data('contractor-id'));
+            $('#awardProjectModal').modal('show');
         });
 
-        document.getElementById('confirm-award-btn').addEventListener('click', async function() {
-            const bidId = document.getElementById('modal-bid-id').value;
-            const bidPrice = document.getElementById('modal-bid-price').value;
-            const contractorId = document.getElementById('modal-contractor-id').value;
+        $('#confirm-award-btn').click(async function() {
+            const projectId = $('#modal-project-id').val();
+            const bidPrice = $('#modal-bid-price').val();
+            const contractorId = $('#modal-contractor-id').val();
+
+            // Close the modal
+            $('#awardProjectModal').modal('hide');
 
             if (typeof window.ethereum !== 'undefined') {
+                const web3 = new Web3(window.ethereum);
+
                 try {
-                    await ethereum.request({
+                    await window.ethereum.request({
                         method: 'eth_requestAccounts'
                     });
-                    const web3 = new Web3(window.ethereum);
-                    const contractAddress = '0x6aD482f8a263bAbD138db210D921B70E17f95AB0';
+
+                    const contractAddress = "0x2bb6c037Ee8E4cc87fE1E1CFA75c515A459c4e00";
                     const contractABI = [{
                             "inputs": [{
                                     "internalType": "uint256",
@@ -340,6 +334,30 @@ $result = $stmt->get_result();
                             "inputs": [],
                             "stateMutability": "nonpayable",
                             "type": "constructor"
+                        },
+                        {
+                            "anonymous": false,
+                            "inputs": [{
+                                    "indexed": false,
+                                    "internalType": "uint256",
+                                    "name": "projectId",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "indexed": false,
+                                    "internalType": "uint256",
+                                    "name": "fee",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "indexed": false,
+                                    "internalType": "uint256",
+                                    "name": "netAmount",
+                                    "type": "uint256"
+                                }
+                            ],
+                            "name": "FeeDeducted",
+                            "type": "event"
                         },
                         {
                             "anonymous": false,
@@ -398,6 +416,17 @@ $result = $stmt->get_result();
                             "name": "updateServiceFee",
                             "outputs": [],
                             "stateMutability": "nonpayable",
+                            "type": "function"
+                        },
+                        {
+                            "inputs": [],
+                            "name": "escrowWallet",
+                            "outputs": [{
+                                "internalType": "address",
+                                "name": "",
+                                "type": "address"
+                            }],
+                            "stateMutability": "view",
                             "type": "function"
                         },
                         {
@@ -464,34 +493,61 @@ $result = $stmt->get_result();
                             "type": "function"
                         }
                     ];
+
                     const contract = new web3.eth.Contract(contractABI, contractAddress);
                     const accounts = await web3.eth.getAccounts();
-                    const amountInWei = web3.utils.toWei(bidPrice, 'ether');
+                    const account = accounts[0];
 
-                    contract.methods.awardProject(bidId, contractorId).send({
-                        from: accounts[0],
-                        value: amountInWei
-                    }).on('confirmation', function(confirmationNumber, receipt) {
-                        console.log('Confirmation number:', confirmationNumber);
-                        console.log('Receipt:', receipt);
-                        if (confirmationNumber === 1) {
-                            $.post('award_project.php', {
-                                bid_id: bidId,
-                                contractor_id: contractorId
-                            }, function(response) {
-                                if (response.success) {
+                    console.log('ProjectId:', projectId);
+                    console.log('BidPrice:', bidPrice);
+                    console.log('ContractorId:', contractorId);
+                    console.log('Account:', account);
+
+                    // Validate input values
+                    if (!projectId || !contractorId || !bidPrice || !account) {
+                        alert('Missing required information to award the project.');
+                        return;
+                    }
+
+                    const transaction = await contract.methods.awardProject(projectId, contractorId)
+                        .send({
+                            from: account,
+                            value: web3.utils.toWei(bidPrice, 'ether')
+                        });
+
+                    console.log('Transaction:', transaction);
+                    alert("Project awarded successfully!");
+
+                    // Insert project awarding details into the database
+                    $.ajax({
+                        type: 'POST',
+                        url: 'award_project.php',
+                        data: {
+                            bid_id: projectId,
+                            contractor_id: contractorId
+                        },
+                        success: function(response) {
+                            try {
+                                const data = JSON.parse(response);
+                                if (data.success) {
                                     location.reload();
                                 } else {
-                                    alert(response.message);
+                                    alert("Error: " + data.message);
                                 }
-                            }, 'json');
+                            } catch (e) {
+                                alert("Failed to parse response from the server.");
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert("Error: " + textStatus + " - " + errorThrown);
                         }
-                    }).on('error', console.error);
+                    });
                 } catch (error) {
-                    console.error('User denied account access or other error:', error);
+                    console.error('Error:', error);
+                    alert('Failed to award the project. Please try again.');
                 }
             } else {
-                console.error('MetaMask is not installed');
+                alert('Please install MetaMask to proceed.');
             }
         });
     });

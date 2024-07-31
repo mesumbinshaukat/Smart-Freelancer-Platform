@@ -13,6 +13,8 @@
 <script src="assets/plugins/jquery-knob/excanvas.js"></script>
 <script src="assets/plugins/jquery-knob/jquery.knob.js"></script>
 <script src="assets/plugins/Drag-And-Drop/dist/imageuploadify.min.js"></script>
+<script src="../node_modules/web3/dist/web3.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
 
 <script>
 $(function() {
