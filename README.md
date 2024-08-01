@@ -48,7 +48,7 @@ composer require phpmailer/phpmailer
 ```
 
 ## Create `.env` File On Project's Root Directory
-### Please Add These Folling ***`Environment/Secret Variables`*** In This `.env`:
+#### Please Add These Folling ***`Environment/Secret Variables`*** In This `.env`:
 
 > localhost = _"`YOUR_DATABASE_HOST`"_
 
