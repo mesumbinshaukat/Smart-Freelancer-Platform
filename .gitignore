@@ -1,5 +1,4 @@
 .env
-db_freelance.sql
 user/assets/attachments/
 node_modules
 vendor
