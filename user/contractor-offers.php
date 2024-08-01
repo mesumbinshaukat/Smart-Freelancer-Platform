@@ -63,18 +63,20 @@ $result = $stmt->get_result();
                 <div class="card">
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="example2" class="table table-striped table-bordered text-center">
+                            <table id="contractor-offers" class="table table-striped table-bordered text-center">
                                 <thead>
                                     <tr>
-                                        <th>#</th>
-                                        <th>Contractor Name</th>
-                                        <th>Proposal</th>
-                                        <th>Offer Date</th>
-                                        <th>Offer Price</th>
-                                        <th>Project Name</th>
-                                        <th>Project Created By</th>
-                                        <th>Award Project</th>
-                                        <th>Action</th>
+                                        <th data-dt-order="enable" data-dt-order="icon-only">#</th>
+                                        <th data-dt-order="enable" data-dt-order="icon-only">Contractor Name</th>
+                                        <th data-dt-order="enable" data-dt-order="icon-only">Proposal</th>
+                                        <th data-dt-order="enable" data-dt-order="icon-only">Offer Date</th>
+                                        <th data-dt-order="enable" data-dt-order="icon-only">Offer Price</th>
+                                        <th data-dt-order="enable" data-dt-order="icon-only">Project Name</th>
+                                        <th data-dt-order="enable" data-dt-order="icon-only">Project Created By</th>
+                                        <th data-dt-order="enable" data-dt-order="icon-only" data-priority="1">Award
+                                            Project</th>
+                                        <th data-dt-order="enable" data-dt-order="icon-only" data-priority="2">Action
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -204,6 +206,8 @@ $result = $stmt->get_result();
     });
 
     $(document).ready(function() {
+        // $('#contractor-offers').DataTable();
+
         $('.send-button').click(function() {
             var contractorId = $(this).data('contractor-id');
             var chatForm = $('form[data-contractor-id="' + contractorId + '"]');

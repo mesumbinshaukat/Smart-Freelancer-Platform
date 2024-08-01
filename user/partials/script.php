@@ -16,6 +16,10 @@
 <script src="../node_modules/web3/dist/web3.min.js"></script>
 <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script> -->
 
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.2/css/dataTables.dataTables.css" />
+
+<script src="https://cdn.datatables.net/2.1.2/js/dataTables.js"></script>
+
 <script>
 $(function() {
     $(".knob").knob();
@@ -81,3 +85,21 @@ $(document).ready(function() {
         });
     }
 </script> -->
+
+<script>
+let table = new DataTable('#contractor-offers', {
+
+    reponsive: true,
+    scrollY: true,
+    scroller: {
+        displayBuffer: 20
+    },
+    ordering: true,
+    lengthChange: true,
+    columnDefs: [{
+        responsivePriority: 1,
+        targets: 0
+    }, ],
+
+});
+</script>
