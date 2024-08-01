@@ -73,9 +73,9 @@ $result = $stmt->get_result();
                                         <th data-dt-order="enable" data-dt-order="icon-only">Offer Price</th>
                                         <th data-dt-order="enable" data-dt-order="icon-only">Project Name</th>
                                         <th data-dt-order="enable" data-dt-order="icon-only">Project Created By</th>
-                                        <th data-dt-order="enable" data-dt-order="icon-only" data-priority="1">Award
+                                        <th data-dt-order="enable" data-dt-order="icon-only">Award
                                             Project</th>
-                                        <th data-dt-order="enable" data-dt-order="icon-only" data-priority="2">Action
+                                        <th data-dt-order="enable" data-dt-order="icon-only">Action
                                         </th>
                                     </tr>
                                 </thead>
