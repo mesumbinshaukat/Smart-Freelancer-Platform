@@ -82,6 +82,10 @@ $result = $stmt->get_result();
                                     if ($result->num_rows > 0) {
                                         $counter = 1;
                                         while ($row = $result->fetch_assoc()) {
+                                            $select_tbl_wallet_address = "SELECT * FROM `tbl_wallet_address` WHERE `user_id` = '{$row['bidder_id']}'";
+                                            $result_tbl_wallet_address = mysqli_query($con, $select_tbl_wallet_address);
+                                            $user_details_cypto = mysqli_fetch_assoc($result_tbl_wallet_address);
+                                            $contractor_wallet_address = !empty($user_details_cypto['wallet_address']) ? $user_details_cypto['wallet_address'] : '';
                                             echo "<tr>";
                                             echo "<td>" . $counter++ . "</td>";
                                             echo "<td>" . htmlspecialchars($row['bidder_name']) . "</td>";
@@ -90,7 +94,7 @@ $result = $stmt->get_result();
                                             echo "<td>" . htmlspecialchars($row['bid_price']) . " ETH</td>";
                                             echo "<td>" . htmlspecialchars($row['project_title']) . "</td>";
                                             echo "<td>" . htmlspecialchars($user_details['name']) . "</td>";
-                                            echo "<td><button class='btn btn-primary award-project-btn' data-project-id='" . $row['project_id'] . "' data-bid-price='" . $row['bid_price'] . "' data-contractor-id='" . $row['bidder_id'] . "'>Award</button></td>";
+                                            echo "<td><button class='btn btn-primary award-project-btn' data-project-id='" . $row['project_id'] . "' data-bid-price='" . $row['bid_price'] . "' data-contractor-id='" . $row['bidder_id'] . "' data-contractor-wallet-address='" . $contractor_wallet_address . "'>Award</button></td>";
                                             echo "<td><button class='btn btn-light chat-button' data-bs-toggle='modal' data-bs-target='#chatModal_" . $row['bid_id'] . "' data-bid-id='" . $row['bid_id'] . "' data-contractor-id='" . $row['bidder_id'] . "'><i class='bx bx-message-dots'></i></button></td>";
                                             echo "</tr>";
 
@@ -171,10 +175,12 @@ $result = $stmt->get_result();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+
                     <p>Are you sure you want to award this project?</p>
                     <input type="hidden" id="modal-project-id">
                     <input type="hidden" id="modal-bid-price">
                     <input type="hidden" id="modal-contractor-id">
+                    <input type="hidden" id="modal-contractor-wallet-address">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -282,6 +288,7 @@ $result = $stmt->get_result();
             $('#modal-project-id').val($(this).data('project-id'));
             $('#modal-bid-price').val($(this).data('bid-price'));
             $('#modal-contractor-id').val($(this).data('contractor-id'));
+            $('#modal-contractor-wallet-address').val($(this).data('contractor-wallet-address'));
             $('#awardProjectModal').modal('show');
         });
 
@@ -289,6 +296,7 @@ $result = $stmt->get_result();
             const projectId = $('#modal-project-id').val();
             const bidPrice = $('#modal-bid-price').val();
             const contractorId = $('#modal-contractor-id').val();
+            const contractorAddress = $('#modal-contractor-wallet-address').val();
 
             // Close the modal
             $('#awardProjectModal').modal('hide');
@@ -504,12 +512,14 @@ $result = $stmt->get_result();
                     console.log('Account:', account);
 
                     // Validate input values
-                    if (!projectId || !contractorId || !bidPrice || !account) {
+                    if (!projectId || !contractorId || !bidPrice || !account || !
+                        contractorAddress) {
                         alert('Missing required information to award the project.');
                         return;
                     }
 
-                    const transaction = await contract.methods.awardProject(projectId, contractorId)
+                    const transaction = await contract.methods.awardProject(projectId,
+                            contractorAddress)
                         .send({
                             from: account,
                             value: web3.utils.toWei(bidPrice, 'ether')

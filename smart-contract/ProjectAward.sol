@@ -4,6 +4,7 @@ pragma solidity ^0.8.15;
 
 contract ProjectAward {
     address public owner;
+    address public escrowWallet = /* YOUR_ESCROW_WALLET */; // Default escrow wallet
     uint public serviceFee = 10; // 10% service fee
 
     struct Project {
@@ -19,6 +20,7 @@ contract ProjectAward {
 
     event ProjectAwarded(uint projectId, address contractor, uint amount);
     event ProjectCompleted(uint projectId, address contractor, uint amount);
+    event FeeDeducted(uint projectId, uint fee, uint netAmount);
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Not the contract owner");
@@ -38,38 +40,39 @@ contract ProjectAward {
     }
 
     function awardProject(uint projectId, address contractor) external payable {
-        require(!projects[projectId].isAwarded, "Project already awarded");
         require(msg.value > 0, "No ETH sent");
-        projects[projectId] = Project({
-            id: projectId,
-            creator: msg.sender,
-            contractor: contractor,
-            amount: msg.value,
-            isCompleted: false,
-            isAwarded: true
-        });
+
+        Project storage project = projects[projectId];
+        require(!project.isAwarded, "Project already awarded");
+
+        project.id = projectId;
+        project.creator = msg.sender;
+        project.contractor = contractor;
+        project.amount = msg.value;
+        project.isCompleted = false;
+        project.isAwarded = true;
+
+        payable(escrowWallet).transfer(msg.value);
 
         emit ProjectAwarded(projectId, contractor, msg.value);
     }
 
     function completeProject(uint projectId) external onlyCreator(projectId) {
-        require(projects[projectId].isAwarded, "Project not awarded");
-        require(!projects[projectId].isCompleted, "Project already completed");
+        Project storage project = projects[projectId];
+        require(project.isAwarded, "Project not awarded");
+        require(!project.isCompleted, "Project already completed");
 
-        uint amount = projects[projectId].amount;
+        uint amount = project.amount;
         uint fee = (amount * serviceFee) / 100;
         uint payment = amount - fee;
 
-        payable(owner).transfer(fee);
-        payable(projects[projectId].contractor).transfer(payment);
+        payable(owner).transfer(fee); // Transfer fee to the owner
+        payable(project.contractor).transfer(payment); // Transfer payment to the contractor
 
-        projects[projectId].isCompleted = true;
+        project.isCompleted = true;
 
-        emit ProjectCompleted(
-            projectId,
-            projects[projectId].contractor,
-            payment
-        );
+        emit ProjectCompleted(projectId, project.contractor, payment);
+        emit FeeDeducted(projectId, fee, payment);
     }
 
     function updateServiceFee(uint newFee) external onlyOwner {
