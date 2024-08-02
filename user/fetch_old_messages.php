@@ -64,8 +64,8 @@ try {
             echo "</div>";
         } else {
             echo "<div class='d-flex flex-row justify-content-start mb-4'>";
-            echo "<div class='chat-message ms-3' style='background-color: rgba(57, 192, 237, 0.2);'>";
-            echo "<p class='small mb-0'>" . $message_content . "</p>";
+            echo "<div class='chat-message ms-3 bg-success'>";
+            echo "<p class='small mb-0 text-dark'>" . $message_content . "</p>";
             if (!empty($attachments)) {
                 foreach ($attachments as $attachment) {
                     echo "<a href='" . htmlspecialchars($attachment) . "'>Attachment</a><br>";

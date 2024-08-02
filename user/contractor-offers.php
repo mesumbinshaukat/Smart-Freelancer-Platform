@@ -100,47 +100,12 @@ $result = $stmt->get_result();
                                             echo "<td><button class='btn btn-light chat-button' data-bs-toggle='modal' data-bs-target='#chatModal_" . $row['bid_id'] . "' data-bid-id='" . $row['bid_id'] . "' data-contractor-id='" . $row['bidder_id'] . "'><i class='bx bx-message-dots'></i></button></td>";
                                             echo "</tr>";
 
-                                            echo '
-    <div class="modal fade" id="chatModal_' . $row['bid_id'] . '" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="chatModalLabel">Live Chat</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="container chat-container">
-                        <div class="row justify-content-center">
-                            <div class="col-12">
-                                <div class="card chat-card">
-                                    <div class="card-body chat-body" id="chatBody_' . $row['bid_id'] . '">
-                                    </div>
-                                    <div class="card-footer">
-                                        <form class="chat-form" data-bid-id="' . $row['bid_id'] . '" data-contractor-id="' . $row['bidder_id'] . '">
-                                            <input type="hidden" name="client_id" value="' . $user_details['id'] . '">
-                                            <input type="hidden" name="contractor_id" value="' . $row['bidder_id'] . '">
-                                            <div class="form-outline chat-textarea">
-                                                <textarea class="form-control bg-body-tertiary" name="chatMessage" rows="3"></textarea>
-                                                <label class="form-label">Type your message</label>
-                                            </div>
-                                            <div class="d-flex justify-content-end mt-2">
-                                                <input type="file" class="form-control" name="chatAttachment">
-                                            </div>
-                                            <div class="d-flex justify-content-end mt-2">
-                                                <button type="button" class="btn btn-secondary me-2" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary send-button" data-bid-id="' . $row['bid_id'] . '" data-contractor-id="' . $row['bidder_id'] . '">Send</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-';
+                                            // Include the chat modal
+                                            try {
+                                                chatModal($row['bid_id'], $row['bidder_id'], $user_details['id']);
+                                            } catch (Exception $e) {
+                                                echo $e->getMessage();
+                                            }
                                         }
                                     } else {
                                         echo "<tr><td colspan='8' class='text-center'>No offers found</td></tr>";
@@ -196,97 +161,7 @@ $result = $stmt->get_result();
     <script src="../node_modules/web3/dist/web3.min.js"></script>
 
     <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-        const floatingChatButton = document.getElementById('floatingChatButton');
-        if (floatingChatButton) {
-            floatingChatButton.addEventListener('click', function() {
-                $('#userListModal').modal('show');
-            });
-        }
-    });
-
     $(document).ready(function() {
-        // $('#contractor-offers').DataTable();
-
-        $('.send-button').click(function() {
-            var contractorId = $(this).data('contractor-id');
-            var chatForm = $('form[data-contractor-id="' + contractorId + '"]');
-            var formData = new FormData(chatForm[0]);
-
-            $.ajax({
-                type: 'POST',
-                url: 'send_messages.php',
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function(response) {
-                    console.log(response);
-                    try {
-                        var data = typeof response === "string" ? JSON.parse(response) :
-                            response;
-                        if (data.success) {
-                            chatForm[0].reset();
-                            fetchOldMessages(contractorId, chatForm.data('bid-id'));
-                        } else {
-                            toastr.error(data.message);
-                        }
-                    } catch (err) {
-                        console.log("Catch Error:" + err.message);
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    console.log("Error:" + textStatus + " | " + errorThrown);
-                }
-            });
-        });
-
-        function fetchOldMessages(contractorId, bidId) {
-            $.ajax({
-                type: 'GET',
-                url: 'fetch_old_messages.php',
-                data: {
-                    contractor_id: contractorId
-                },
-                success: function(response) {
-                    $('#chatBody_' + bidId).html(response);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert("Error:" + textStatus + " | " + errorThrown);
-                }
-            });
-        }
-
-        $('body').on('show.bs.modal', '.modal', function() {
-            var contractorId = $(this).find('.send-button').data('contractor-id');
-            var bidId = $(this).find('.send-button').data('bid-id');
-            fetchOldMessages(contractorId, bidId);
-            setInterval(function() {
-                fetchOldMessages(contractorId, bidId);
-            }, 500);
-        });
-
-        $('body').on('click', '.user-item', function() {
-            var contractorId = $(this).data('contractor-id');
-            var bidId = $(this).data('bid-id');
-            var modalId = '#chatModal_' + bidId;
-            $(modalId).modal('show');
-            fetchOldMessages(contractorId, bidId);
-        });
-
-        function fetchUsers() {
-            $.ajax({
-                type: 'GET',
-                url: 'fetch_users.php',
-                success: function(response) {
-                    $("#userList").html(response);
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    alert("Error:" + textStatus + " | " + errorThrown);
-                }
-            });
-        }
-
-        fetchUsers();
 
         $('.award-project-btn').click(function() {
             $('#modal-project-id').val($(this).data('project-id'));
