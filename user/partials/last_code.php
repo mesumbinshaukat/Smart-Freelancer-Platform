@@ -66,3 +66,15 @@ $(document).ready(function() {
 </script>
 
 <script src="chat.js"></script>
+
+<?php
+
+while ($row = mysqli_fetch_assoc($result)) {
+
+    try {
+        chatModal($row['bid_id'], $row['bidder_id'], $user_details['id']);
+    } catch (Exception $e) {
+        echo $e->getMessage();
+    }
+}
+?>
