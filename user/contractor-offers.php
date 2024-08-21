@@ -158,6 +158,19 @@ $result = $stmt->get_result();
     </div>
 
     <?php include("./partials/last_code.php") ?>
+
+    <?php
+
+
+    while ($row = mysqli_fetch_assoc($result)) {
+
+        try {
+            chatModal($row['bid_id'], $row['bidder_id'], $user_details['id']);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+        }
+    }
+    ?>
     <script src="../node_modules/web3/dist/web3.min.js"></script>
 
     <script>

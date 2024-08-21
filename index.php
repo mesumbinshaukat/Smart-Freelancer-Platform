@@ -402,7 +402,8 @@
                                 <div class="content flex-grow-1">
                                     <h5 class="text-white mb-4">Blog Content</h5>
                                     <p class="mb-0">
-                                        Writing blog content with Smart Contractor, make sure you have a clear understanding of who
+                                        Writing blog content with Smart Contractor, make sure you have a clear
+                                        understanding of who
                                         your
                                         audience is.
                                     </p>
@@ -438,7 +439,8 @@
                                 <div class="content flex-grow-1">
                                     <h5 class="text-white mb-4">Digital Ads</h5>
                                     <p class="mb-0">
-                                        A Magical platform to Optimize you content for the first know who you're targeting.
+                                        A Magical platform to Optimize you content for the first know who you're
+                                        targeting.
                                         Identify
                                         your target.
                                     </p>
