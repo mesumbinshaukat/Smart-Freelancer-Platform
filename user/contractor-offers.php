@@ -32,7 +32,9 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
 }
 
 $projects_query = "
-    SELECT p.id as project_id, p.project_title, p.u_id as creator_id, u.name as creator_name, b.id as bid_id, b.bid_letter, b.bid_date, b.bid_price, b.user_id as bidder_id, bu.name as bidder_name
+    SELECT p.id as project_id, p.project_title, p.u_id as creator_id, u.name as creator_name, 
+           b.id as bid_id, b.bid_letter, b.bid_date, b.bid_price, 
+           b.user_id as bidder_id, bu.name as bidder_name
     FROM tbl_projects p
     JOIN tbl_bids b ON p.id = b.project_id
     JOIN tbl_user u ON p.u_id = u.id
@@ -66,17 +68,15 @@ $result = $stmt->get_result();
                             <table id="contractor-offers" class="table table-striped table-bordered text-center">
                                 <thead>
                                     <tr>
-                                        <th data-dt-order="enable" data-dt-order="icon-only">#</th>
-                                        <th data-dt-order="enable" data-dt-order="icon-only">Contractor Name</th>
-                                        <th data-dt-order="enable" data-dt-order="icon-only">Proposal</th>
-                                        <th data-dt-order="enable" data-dt-order="icon-only">Offer Date</th>
-                                        <th data-dt-order="enable" data-dt-order="icon-only">Offer Price</th>
-                                        <th data-dt-order="enable" data-dt-order="icon-only">Project Name</th>
-                                        <th data-dt-order="enable" data-dt-order="icon-only">Project Created By</th>
-                                        <th data-dt-order="enable" data-dt-order="icon-only">Award
-                                            Project</th>
-                                        <th data-dt-order="enable" data-dt-order="icon-only">Action
-                                        </th>
+                                        <th>#</th>
+                                        <th>Contractor Name</th>
+                                        <th>Proposal</th>
+                                        <th>Offer Date</th>
+                                        <th>Offer Price</th>
+                                        <th>Project Name</th>
+                                        <th>Project Created By</th>
+                                        <th>Award Project</th>
+                                        <th>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -84,10 +84,15 @@ $result = $stmt->get_result();
                                     if ($result->num_rows > 0) {
                                         $counter = 1;
                                         while ($row = $result->fetch_assoc()) {
-                                            $select_tbl_wallet_address = "SELECT * FROM `tbl_wallet_address` WHERE `user_id` = '{$row['bidder_id']}'";
-                                            $result_tbl_wallet_address = mysqli_query($con, $select_tbl_wallet_address);
-                                            $user_details_cypto = mysqli_fetch_assoc($result_tbl_wallet_address);
-                                            $contractor_wallet_address = !empty($user_details_cypto['wallet_address']) ? $user_details_cypto['wallet_address'] : '';
+                                            // Fetch contractor's wallet address
+                                            $select_tbl_wallet_address = "SELECT wallet_address FROM `tbl_wallet_address` WHERE `user_id` = ?";
+                                            $stmt_wallet = $con->prepare($select_tbl_wallet_address);
+                                            $stmt_wallet->bind_param("i", $row['bidder_id']);
+                                            $stmt_wallet->execute();
+                                            $result_tbl_wallet_address = $stmt_wallet->get_result();
+                                            $user_details_cypto = $result_tbl_wallet_address->fetch_assoc();
+                                            $contractor_wallet_address = $user_details_cypto['wallet_address'] ?? '';
+
                                             echo "<tr>";
                                             echo "<td>" . $counter++ . "</td>";
                                             echo "<td>" . htmlspecialchars($row['bidder_name']) . "</td>";
@@ -108,7 +113,18 @@ $result = $stmt->get_result();
                                             }
                                         }
                                     } else {
-                                        echo "<tr><td colspan='8' class='text-center'>No offers found</td></tr>";
+                                        echo "<tr>
+                                        <td class='text-center'>No offers found</td>
+                                        <td class='text-center'>No offers found</td>
+                                        <td class='text-center'>No offers found</td>
+                                        <td class='text-center'>No offers found</td>
+                                        <td class='text-center'>No offers found</td>
+                                        <td class='text-center'>No offers found</td>
+                                        <td class='text-center'>No offers found</td>
+                                        <td class='text-center'>No offers found</td>
+                                        <td class='text-center'>No offers found</td>
+                                        
+                                        </tr>";
                                     }
                                     ?>
                                 </tbody>
@@ -121,6 +137,7 @@ $result = $stmt->get_result();
                                         <th>Offer Price</th>
                                         <th>Project Name</th>
                                         <th>Project Created By</th>
+                                        <th>Award Project</th>
                                         <th>Action</th>
                                     </tr>
                                 </tfoot>

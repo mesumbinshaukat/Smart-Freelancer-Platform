@@ -18,28 +18,22 @@ $account = new Account($client);
 // Check if the user is logged in locally
 if (isset($_COOKIE["email"]) && isset($_COOKIE["user_logged_in_bool"])) {
     try {
-        // Attempt to get the authenticated user
-        $user = $account->get();
-
-        // If the user is authenticated in Appwrite, delete all active sessions
-        if ($user) {
-            $account->deleteSessions(); // Delete all active sessions
-        }
+        // Attempt to delete the current session in Appwrite
+        $account->deleteSession("current"); // Delete the current session in Appwrite
     } catch (Exception $e) {
-        // If the user is not authenticated in Appwrite, ignore the error and proceed with logout
+        // If there's an error related to missing scope or no session, ignore it
         if (strpos($e->getMessage(), 'missing scope') === false) {
-            // Log or handle the exception differently if needed
             echo "Error: " . $e->getMessage();
             exit();
         }
     }
 
-    // Clear cookies and session
+    // Clear local cookies and session data
     setcookie("email", "", time() - 3600, "/");
     setcookie("user_logged_in_bool", "", time() - 3600, "/");
     unset($_COOKIE["email"]);
     unset($_COOKIE["user_logged_in_bool"]);
-    $_SESSION["success"] = "Logged out successfully";
+    // $_SESSION["success"] = "Logged out successfully";
 
     // Redirect to login page
     header("location:../login.php");

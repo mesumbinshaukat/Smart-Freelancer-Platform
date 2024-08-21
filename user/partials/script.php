@@ -33,12 +33,6 @@ new PerfectScrollbar(".app-container")
 </script>
 
 <script>
-$(document).ready(function() {
-    $('#image-uploadify').imageuploadify();
-});
-</script>
-
-<script>
 let table = new DataTable('#contractor-offers', {
 
     reponsive: true,
