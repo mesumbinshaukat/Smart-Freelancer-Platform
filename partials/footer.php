@@ -3,29 +3,27 @@
         <div class="row g-10">
             <div class="col-lg-9 col-xl-8 order-lg-2">
                 <div class="row g-6">
-                    <div class="col-md-4 col-lg-4">
+                    <div class="col-md-6 col-lg-6">
                         <div class="footer-widget text-center text-md-start">
-                            <h6 class="text-white mb-2">Gen AI</h6>
+                            <h6 class="text-white mb-2">Smart Freelancing Platform</h6>
                             <ul class="link-list list-unstyled mb-0">
                                 <li>
-                                    <a href="about.html">About</a>
+                                    <a href="about.php">About</a>
+                                </li>
+
+                                <li>
+                                    <a href="login.php">Sign in</a>
                                 </li>
                                 <li>
-                                    <a href="blog.html">Blog</a>
+                                    <a href="register.php">Register</a>
                                 </li>
                                 <li>
-                                    <a href="login.html">Sign in</a>
-                                </li>
-                                <li>
-                                    <a href="register.html">Register</a>
-                                </li>
-                                <li>
-                                    <a href="contact.html">Contact</a>
+                                    <a href="contact.php">Contact</a>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    <div class="col-md-4 col-lg-4">
+                    <!-- <div class="col-md-4 col-lg-4">
                         <div class="footer-widget text-center text-md-start">
                             <h6 class="text-white mb-2">Use Cases</h6>
                             <ul class="link-list list-unstyled mb-0">
@@ -46,8 +44,8 @@
                                 </li>
                             </ul>
                         </div>
-                    </div>
-                    <div class="col-md-4 col-lg-4">
+                    </div> -->
+                    <div class="col-md-6 col-lg-6">
                         <div class="footer-widget text-center text-md-start">
                             <h6 class="text-white mb-4">News & Update</h6>
                             <form action="#">
@@ -126,19 +124,21 @@
             <div class="col-lg-3 order-lg-1 me-auto">
                 <div class="footer-widget text-center text-lg-start">
                     <a href="">
-                        <img src="assets/images/logo.svg" alt="" class="img-fluid" width="135" />
+                        <img src="logos/Brown_Elegant_Logo_Lawyer_Logo__6_-removebg-preview.png" alt=""
+                            class="img-fluid" width="135" />
                     </a>
                     <p class="fs-sm mb-0 mt-4">
-                        A Magical Tool to Optimize you content for the first know who you're targeting. Identify
-                        your
-                        target audience.
+                        At Smart Freelancing, we empower freelancers to
+                        showcase their skills,
+                        and clients to find the right talent for their projects.
                     </p>
                 </div>
             </div>
         </div>
 
         <div class="text-center py-6 mt-8">
-            <p class="fs-sm mb-0">Copyright <span class="text-primary-dark">GenAI</span>. Design By Marvel_Theme
+            <p class="fs-sm mb-0">Copyright <span class="text-primary-dark">2024</span>. Design By World Of Tech (Pvt)
+                Ltd
             </p>
         </div>
     </div>

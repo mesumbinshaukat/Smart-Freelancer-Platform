@@ -15,7 +15,7 @@
         content="Author: Marvel Theme, AI content writing and copywriting html5 and Bootstrap 5 landing page template" />
 
     <!-- Favicon -->
-    <link rel="icon" href="assets/images/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="logos/Brown Elegant Logo Lawyer Logo (6).png" type="image/svg+xml" />
 
     <!-- CSS -->
     <link rel="stylesheet" href="assets/css/plugins.css" />

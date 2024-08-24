@@ -96,7 +96,7 @@ if (isset($_POST["submit"])) {
     <div class="wrapper">
         <div class="account-wrapper text-center">
             <a href="">
-                <img src="assets/images/logo.svg" alt="Logo" width="165" />
+                <img src="logos/Brown_Elegant_Logo_Lawyer_Logo__6_-removebg-preview.png" alt="Logo" width="165" />
             </a>
             <div class="vstack gap-4 mt-10">
                 <!-- Google OAuth Button -->
