@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Aug 16, 2024 at 07:55 AM
+-- Generation Time: Aug 24, 2024 at 07:48 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -118,42 +118,32 @@ CREATE TABLE `tbl_completion` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `tbl_images`
+-- Table structure for table `tbl_contact`
 --
 
-CREATE TABLE `tbl_images` (
+CREATE TABLE `tbl_contact` (
   `id` int(11) NOT NULL,
-  `image` varchar(1000) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `uploaded_at` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `tbl_messages`
---
-
-CREATE TABLE `tbl_messages` (
-  `id` int(11) NOT NULL,
-  `message` longtext NOT NULL,
-  `freelancer_id` int(11) NOT NULL,
-  `client_id` int(11) NOT NULL,
-  `sender_name` varchar(255) NOT NULL,
-  `receiver_name` varchar(255) NOT NULL,
-  `attachments` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`attachments`)),
-  `date_time` datetime NOT NULL
+  `name` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `phone_number` varchar(20) NOT NULL,
+  `subject` varchar(120) NOT NULL,
+  `message` tinytext NOT NULL,
+  `country` varchar(100) NOT NULL,
+  `time_stamp` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `tbl_messages`
+-- Dumping data for table `tbl_contact`
 --
 
-INSERT INTO `tbl_messages` (`id`, `message`, `freelancer_id`, `client_id`, `sender_name`, `receiver_name`, `attachments`, `date_time`) VALUES
-(1, 'Working', 1, 1, '', '', NULL, '0000-00-00 00:00:00'),
-(2, 'Still working?', 1, 2, '', '', NULL, '0000-00-00 00:00:00'),
-(3, 'Yes', 1, 2, '', '', NULL, '0000-00-00 00:00:00'),
-(4, 'Yes, it sill works', 1, 2, '', '', NULL, '0000-00-00 00:00:00');
+INSERT INTO `tbl_contact` (`id`, `name`, `email`, `phone_number`, `subject`, `message`, `country`, `time_stamp`) VALUES
+(1, '', '', '', '', '', '', '2024-08-24 09:39:38'),
+(2, 'Mesum Bin Shaukat', 'masumbinshaukat@gmail.com', '1122334455', 'Demo', 'Working', 'Palestine', '2024-08-24 09:47:11'),
+(3, 'Huzaifa', 'huzaifa@worldofech.company', '12324342', 'Just Test', 'Just Testing bruh...', 'Pakistan', '2024-08-24 09:48:24'),
+(4, 'Huzaifa', 'huzaifa@worldofech.company', '12324342', 'Just Test', 'Just Testing bruh...', 'Pakistan', '2024-08-24 09:48:24'),
+(5, 'Rafay', 'smokeark3@gmail.com', '123456796', 'Test', 'Test', 'Burundi', '2024-08-24 09:52:26'),
+(6, 'Zohair', 'zohair@worldoftech.company', '123445677', 'Test', 'Working...!!!', 'Pakistan', '2024-08-24 09:54:35'),
+(7, 'Sarim', 'sarim@worldoftech.company', '17438432', 'Testing', 'Wotkingdsgdsg', 'South Georgia', '2024-08-24 09:56:08');
 
 -- --------------------------------------------------------
 
@@ -200,8 +190,8 @@ CREATE TABLE `tbl_projects` (
 INSERT INTO `tbl_projects` (`id`, `project_title`, `project_desc`, `project_deadline`, `project_fee`, `attachments`, `cat_id`, `u_id`, `created_at`, `status`) VALUES
 (3, 'Ecommerce Store Marketing', 'I need a digital marketing expert for my ecommerce online store.', '2024-07-31', '0.03', '669d279b26cd6_merged.pdf', 2, 2, '2024-07-21 20:22:03', 'Not Awarded'),
 (4, 'Copywriting Expert Needed Urgent', 'I need a copywriter for my ecommerce site. 1 year experience is required.', '2024-08-30', '0.03', '669d2889a0791_readme.txt', 1, 2, '2024-07-21 20:26:01', 'awarded'),
-(5, 'Copywriter Needed', 'I need a copywriter for my website', '2024-07-31', '0.09', '669f9b0475cf6_merged.pdf', 1, 1, '2024-07-23 16:59:00', 'Not Awarded'),
-(6, 'Another Copywriting', 'I need a copywriter for my ecommerce website and for email marketing campaigns', '2024-08-01', '0.5', '669f9e80e3815_merged.pdf', 1, 1, '2024-07-23 17:13:52', 'Not Awarded'),
+(5, 'Copywriter Needed!!!', 'I need a copywriter for my website', '2024-07-31', '0.09', '669f9b0475cf6_merged.pdf', 1, 1, '2024-07-23 16:59:00', 'Not Awarded'),
+(6, 'Another Copywriting!', 'I need a copywriter for my ecommerce website and for email marketing campaigns', '2024-08-01', '0.5', '669f9e80e3815_merged.pdf', 1, 1, '2024-07-23 17:13:52', 'deleted'),
 (7, 'Copywriter Needed Urgently', 'World Of Tech (PVT) Ltd. needs a copywriter urgently', '2024-08-31', '0.001', '66ab723229d59_', 1, 3, '2024-08-01 16:32:02', 'Not Awarded');
 
 -- --------------------------------------------------------
@@ -225,10 +215,10 @@ CREATE TABLE `tbl_project_assigned` (
 
 CREATE TABLE `tbl_user` (
   `id` int(11) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(100) NOT NULL,
-  `dob` date NOT NULL,
+  `name` varchar(100) DEFAULT NULL,
+  `email` varchar(100) DEFAULT NULL,
+  `password` varchar(100) DEFAULT NULL,
+  `dob` date DEFAULT NULL,
   `address` varchar(200) DEFAULT NULL,
   `phone_number` varchar(20) DEFAULT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp()
@@ -241,7 +231,10 @@ CREATE TABLE `tbl_user` (
 INSERT INTO `tbl_user` (`id`, `name`, `email`, `password`, `dob`, `address`, `phone_number`, `created_at`) VALUES
 (1, 'Huzaifa Rajpoot', 'test@gmail.com', '$2y$10$UpFl6IdPtY3UjH5jRJJ3/OWphyuByJgwh3fPJ.heRdZgsBU0JRJgm', '2001-02-25', 'DHA WALA BANGLA KE PEECHE WALA NAALA', '+920022211445', '2024-07-11 12:48:32'),
 (2, 'Tester 2', 'test2@gmail.com', '$2y$10$7WimviBiyU.BQiPY/a/GQOzUSO/6D0oJdtMFrvV5B5bBxutqdTquq', '2005-08-25', '', '', '2024-07-21 18:35:15'),
-(3, 'Mesum', 'mesum@gmail.com', '$2y$10$Rg35LIF29X7E7v9d9oci1O1o80TgoWSwbg9x05Gh7rGKt9XrT8H0.', '2005-03-25', NULL, NULL, '2024-07-28 11:53:19');
+(3, 'Mesum', 'mesum@gmail.com', '$2y$10$Rg35LIF29X7E7v9d9oci1O1o80TgoWSwbg9x05Gh7rGKt9XrT8H0.', '2005-03-25', NULL, NULL, '2024-07-28 11:53:19'),
+(4, 'Mesum Bin Shaukat', 'masumbinshaukat@gmail.com', NULL, NULL, NULL, NULL, '2024-08-19 21:41:26'),
+(5, 'Masum Bin Shaukat', 'masumbinshaukat786@gmail.com', NULL, NULL, NULL, NULL, '2024-08-19 22:08:29'),
+(6, 'Zohair', 'zohair@gmail.com', '$2y$10$sb.fFzqLrU9A5S/C0jgE5O/UHsVBbEzSJ2J/RNzDYC73vvAit1TB.', '2002-05-14', NULL, NULL, '2024-08-21 17:10:21');
 
 -- --------------------------------------------------------
 
@@ -299,19 +292,10 @@ ALTER TABLE `tbl_completion`
   ADD KEY `fk_key_13` (`user_id`);
 
 --
--- Indexes for table `tbl_images`
+-- Indexes for table `tbl_contact`
 --
-ALTER TABLE `tbl_images`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_key_01` (`user_id`);
-
---
--- Indexes for table `tbl_messages`
---
-ALTER TABLE `tbl_messages`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `fk_key_08` (`client_id`),
-  ADD KEY `fk_key_09` (`freelancer_id`);
+ALTER TABLE `tbl_contact`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `tbl_niche`
@@ -380,16 +364,10 @@ ALTER TABLE `tbl_completion`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `tbl_images`
+-- AUTO_INCREMENT for table `tbl_contact`
 --
-ALTER TABLE `tbl_images`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `tbl_messages`
---
-ALTER TABLE `tbl_messages`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+ALTER TABLE `tbl_contact`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `tbl_niche`
@@ -413,7 +391,7 @@ ALTER TABLE `tbl_project_assigned`
 -- AUTO_INCREMENT for table `tbl_user`
 --
 ALTER TABLE `tbl_user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `tbl_wallet_address`
@@ -445,19 +423,6 @@ ALTER TABLE `tbl_bids`
 ALTER TABLE `tbl_completion`
   ADD CONSTRAINT `fk_key_12` FOREIGN KEY (`project_id`) REFERENCES `tbl_projects` (`id`),
   ADD CONSTRAINT `fk_key_13` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`id`);
-
---
--- Constraints for table `tbl_images`
---
-ALTER TABLE `tbl_images`
-  ADD CONSTRAINT `fk_key_01` FOREIGN KEY (`user_id`) REFERENCES `tbl_user` (`id`);
-
---
--- Constraints for table `tbl_messages`
---
-ALTER TABLE `tbl_messages`
-  ADD CONSTRAINT `fk_key_08` FOREIGN KEY (`client_id`) REFERENCES `tbl_user` (`id`),
-  ADD CONSTRAINT `fk_key_09` FOREIGN KEY (`freelancer_id`) REFERENCES `tbl_user` (`id`);
 
 --
 -- Constraints for table `tbl_projects`

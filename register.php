@@ -51,6 +51,7 @@ if (isset($_POST["submit"])) {
 
     <style>
     .wrapper {
+        margin-top: 70px !important;
         height: 100vh;
         display: flex;
         justify-content: center;
@@ -83,51 +84,65 @@ if (isset($_POST["submit"])) {
 </head>
 
 <body>
-    <div class="wrapper">
-        <div class="account-wrapper text-center">
-            <a href="">
-                <img src="logos/Brown_Elegant_Logo_Lawyer_Logo__6_-removebg-preview.png" alt="Logo" width="165" />
-            </a>
-            <div class="vstack gap-4 mt-10">
-                <!-- Google OAuth Button -->
-                <button type="button" id="googleBtn" class="btn account-btn py-4">
-                    <img src="assets/images/icons/google.svg" alt="" width="24" class="img-fluid icon" />
-                    <span>Continue With Google</span>
-                </button>
-            </div>
 
-            <div class="divider-with-text my-10">
-                <span>Or register with email</span>
-            </div>
+    <div class="wrapper d-flex flex-column justify-between">
+        <?php include("./partials/navbar.php"); ?>
 
-            <form method="post" action="#" class="vstack gap-4" onsubmit="return validatePassword()">
-                <div class="text-start">
-                    <input type="email" class="form-control" placeholder="Enter Your Email" name="email" required />
+        <main class="flex-grow-1">
+            <section class="py-10 py-lg-25">
+                <div class="container">
+                    <div class="account-wrapper text-center">
+                        <a href="">
+                            <img src="logos/Brown_Elegant_Logo_Lawyer_Logo__6_-removebg-preview.png" alt="Logo"
+                                width="165" />
+                        </a>
+                        <div class="vstack gap-4 mt-10">
+                            <!-- Google OAuth Button -->
+                            <button type="button" id="googleBtn" class="btn account-btn py-4">
+                                <img src="assets/images/icons/google.svg" alt="" width="24" class="img-fluid icon" />
+                                <span>Continue With Google</span>
+                            </button>
+                        </div>
+
+                        <div class="divider-with-text my-10">
+                            <span>Or register with email</span>
+                        </div>
+
+                        <form method="post" action="#" class="vstack gap-4" onsubmit="return validatePassword()">
+                            <div class="text-start">
+                                <input type="email" class="form-control" placeholder="Enter Your Email" name="email"
+                                    required />
+                            </div>
+                            <div class="text-start">
+                                <input type="text" class="form-control" placeholder="Enter Your Name" name="name"
+                                    required />
+                            </div>
+                            <div class="text-start">
+                                <input type="date" class="form-control" placeholder="Enter Your Date of Birth"
+                                    name="dob" required />
+                            </div>
+                            <div class="text-start">
+                                <input type="password" id="password" class="form-control" placeholder="Password"
+                                    name="password" required />
+                            </div>
+                            <div class="text-start">
+                                <input type="password" id="confirm_password" class="form-control"
+                                    placeholder="Confirm Password" required />
+                            </div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-primary-dark w-full py-4" name="submit">Create an
+                                    account</button>
+                            </div>
+                            <div class="text-center">
+                                <p>Already have an account? <a href="login.php">Log in</a></p>
+                            </div>
+                        </form>
+                    </div>
+
                 </div>
-                <div class="text-start">
-                    <input type="text" class="form-control" placeholder="Enter Your Name" name="name" required />
-                </div>
-                <div class="text-start">
-                    <input type="date" class="form-control" placeholder="Enter Your Date of Birth" name="dob"
-                        required />
-                </div>
-                <div class="text-start">
-                    <input type="password" id="password" class="form-control" placeholder="Password" name="password"
-                        required />
-                </div>
-                <div class="text-start">
-                    <input type="password" id="confirm_password" class="form-control" placeholder="Confirm Password"
-                        required />
-                </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary-dark w-full py-4" name="submit">Create an
-                        account</button>
-                </div>
-                <div class="text-center">
-                    <p>Already have an account? <a href="login.php">Log in</a></p>
-                </div>
-            </form>
-        </div>
+
+            </section>
+        </main>
     </div>
 
     <script>
