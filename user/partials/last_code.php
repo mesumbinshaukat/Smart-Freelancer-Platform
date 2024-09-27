@@ -1,5 +1,5 @@
 <!-- Add this to a common file included on every page, e.g., partials/footer.php -->
-<div id="floatingChatButton" class="floating-chat-button">
+<!-- <div id="floatingChatButton" class="floating-chat-button">
     <i class='bx bx-message-dots'></i>
 </div>
 
@@ -39,9 +39,7 @@
         </div>
     </div>
 </div>
-
-<?php # include "./chat_modal.php"; 
-?>
+ -->
 
 <!--end page wrapper -->
 <!--start overlay-->
@@ -66,15 +64,3 @@ $(document).ready(function() {
 </script>
 
 <script src="chat.js"></script>
-
-<?php
-
-// while ($row = mysqli_fetch_assoc($result)) {
-
-//     try {
-//         chatModal($row['bid_id'], $row['bidder_id'], $user_details['id']);
-//     } catch (Exception $e) {
-//         echo $e->getMessage();
-//     }
-// }
-?>

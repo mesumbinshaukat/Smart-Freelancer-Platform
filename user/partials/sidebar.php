@@ -62,6 +62,13 @@
             </ul>
         </li>
         <li>
+            <a href="message.php">
+                <div class="parent-icon"><i class='bx bx-message'></i>
+                </div>
+                <div class="menu-title">Chat / Message</div>
+            </a>
+        </li>
+        <li>
             <a href="profile.php">
                 <div class="parent-icon"><i class='bx bx-user'></i>
                 </div>

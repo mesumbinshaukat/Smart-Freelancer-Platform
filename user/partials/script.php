@@ -33,7 +33,7 @@ new PerfectScrollbar(".app-container")
 </script>
 
 <script>
-let table = new DataTable('#contractor-offers', {
+let table = new DataTable('#data-table', {
 
     reponsive: true,
     scrollY: true,
