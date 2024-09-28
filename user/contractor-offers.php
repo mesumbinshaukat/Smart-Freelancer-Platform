@@ -31,12 +31,14 @@ if (!isset($_COOKIE["email"]) || empty($_COOKIE["email"]) || !isset($_COOKIE["us
 $projects_query = "
     SELECT p.id as project_id, p.project_title, p.u_id as creator_id, u.name as creator_name, 
            b.id as bid_id, b.bid_letter, b.bid_date, b.bid_price, 
-           b.user_id as bidder_id, bu.name as bidder_name
+           b.user_id as bidder_id, bu.name as bidder_name, 
+           wa.wallet_address as contractor_wallet_address
     FROM tbl_projects p
     JOIN tbl_bids b ON p.id = b.project_id
     JOIN tbl_user u ON p.u_id = u.id
     JOIN tbl_user bu ON b.user_id = bu.id
-    WHERE p.u_id = ? AND p.status != 'awarded'"; // Filter awarded projects
+    LEFT JOIN tbl_wallet_address wa ON b.user_id = wa.user_id -- Fetch wallet address based on user_id
+    WHERE p.u_id = ? AND p.status != 'awarded'";
 $stmt = $con->prepare($projects_query);
 $stmt->bind_param("i", $user_details['id']);
 $stmt->execute();
@@ -71,7 +73,7 @@ $result = $stmt->get_result();
                                         <th>Offer Price</th>
                                         <th>Project Name</th>
                                         <th>Award Project</th>
-                                        <th>Chat</th>
+                                        <!-- <th>Chat</th> -->
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -79,6 +81,9 @@ $result = $stmt->get_result();
                                     if ($result->num_rows > 0) {
                                         $counter = 1;
                                         while ($row = $result->fetch_assoc()) {
+                                            // Ensure wallet address exists
+                                            $wallet_address = htmlspecialchars($row['contractor_wallet_address'] ?? 'N/A');
+
                                             echo "<tr>";
                                             echo "<td>" . $counter++ . "</td>";
                                             echo "<td>" . htmlspecialchars($row['bidder_name']) . "</td>";
@@ -86,8 +91,12 @@ $result = $stmt->get_result();
                                             echo "<td>" . htmlspecialchars($row['bid_date']) . "</td>";
                                             echo "<td>" . htmlspecialchars($row['bid_price']) . " ETH</td>";
                                             echo "<td>" . htmlspecialchars($row['project_title']) . "</td>";
-                                            echo "<td><button class='btn btn-primary award-project-btn' data-project-id='" . $row['project_id'] . "' data-bid-price='" . $row['bid_price'] . "' data-contractor-id='" . $row['bidder_id'] . "'>Award</button></td>";
-                                            echo "<td><a href='message.php?bidder_id=" . $row['bidder_id'] . "' class='btn btn-light'><i class='bx bx-message-dots'></i> Chat</a></td>";
+                                            echo "<td><button class='btn btn-primary award-project-btn' 
+                                                  data-project-id='" . $row['project_id'] . "' 
+                                                  data-bid-price='" . $row['bid_price'] . "' 
+                                                  data-contractor-id='" . $row['bidder_id'] . "' 
+                                                  data-contractor-wallet-address='" . $wallet_address . "'>
+                                                  Award</button></td>";
                                             echo "</tr>";
                                         }
                                     } else {
@@ -104,6 +113,7 @@ $result = $stmt->get_result();
     </div>
 
     <!-- Award Project Modal -->
+    <!-- Award Project Modal -->
     <div class="modal fade" id="awardProjectModal" tabindex="-1" aria-labelledby="awardProjectModalLabel"
         aria-hidden="true">
         <div class="modal-dialog">
@@ -113,7 +123,6 @@ $result = $stmt->get_result();
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-
                     <p>Are you sure you want to award this project?</p>
                     <input type="hidden" id="modal-project-id">
                     <input type="hidden" id="modal-bid-price">
@@ -134,285 +143,292 @@ $result = $stmt->get_result();
     <script src="../node_modules/web3/dist/web3.min.js"></script>
 
     <script>
-        $(document).ready(function() {
+    $(document).ready(function() {
 
-            $('.award-project-btn').click(function() {
-                $('#modal-project-id').val($(this).data('project-id'));
-                $('#modal-bid-price').val($(this).data('bid-price'));
-                $('#modal-contractor-id').val($(this).data('contractor-id'));
-                $('#modal-contractor-wallet-address').val($(this).data('contractor-wallet-address'));
-                $('#awardProjectModal').modal('show');
-            });
+        $('.award-project-btn').click(function() {
+            $('#modal-project-id').val($(this).data('project-id'));
+            $('#modal-bid-price').val($(this).data('bid-price'));
+            $('#modal-contractor-id').val($(this).data('contractor-id'));
+            $('#modal-contractor-wallet-address').val($(this).data('contractor-wallet-address'));
+            $('#awardProjectModal').modal('show');
+        });
 
-            $('#confirm-award-btn').click(async function() {
-                const projectId = $('#modal-project-id').val();
-                const bidPrice = $('#modal-bid-price').val();
-                const contractorId = $('#modal-contractor-id').val();
-                const contractorAddress = $('#modal-contractor-wallet-address').val();
+        $('#confirm-award-btn').click(async function() {
+            const projectId = $('#modal-project-id').val();
+            const bidPrice = $('#modal-bid-price').val();
+            const contractorId = $('#modal-contractor-id').val();
+            const contractorAddress = $('#modal-contractor-wallet-address').val();
 
-                // Close the modal
-                $('#awardProjectModal').modal('hide');
+            // Close the modal
+            $('#awardProjectModal').modal('hide');
 
-                if (typeof window.ethereum !== 'undefined') {
-                    const web3 = new Web3(window.ethereum);
+            if (typeof window.ethereum !== 'undefined') {
+                const web3 = new Web3(window.ethereum);
 
-                    try {
-                        await window.ethereum.request({
-                            method: 'eth_requestAccounts'
-                        });
+                try {
+                    await window.ethereum.request({
+                        method: 'eth_requestAccounts'
+                    });
 
-                        const contractAddress = "0x2bb6c037Ee8E4cc87fE1E1CFA75c515A459c4e00";
-                        const contractABI = [{
-                                "inputs": [{
-                                        "internalType": "uint256",
-                                        "name": "projectId",
-                                        "type": "uint256"
-                                    },
-                                    {
-                                        "internalType": "address",
-                                        "name": "contractor",
-                                        "type": "address"
-                                    }
-                                ],
-                                "name": "awardProject",
-                                "outputs": [],
-                                "stateMutability": "payable",
-                                "type": "function"
-                            },
-                            {
-                                "inputs": [{
+                    const contractAddress = "0x2bb6c037Ee8E4cc87fE1E1CFA75c515A459c4e00";
+                    const contractABI = [{
+                            "inputs": [{
                                     "internalType": "uint256",
                                     "name": "projectId",
                                     "type": "uint256"
-                                }],
-                                "name": "completeProject",
-                                "outputs": [],
-                                "stateMutability": "nonpayable",
-                                "type": "function"
-                            },
-                            {
-                                "inputs": [],
-                                "stateMutability": "nonpayable",
-                                "type": "constructor"
-                            },
-                            {
-                                "anonymous": false,
-                                "inputs": [{
-                                        "indexed": false,
-                                        "internalType": "uint256",
-                                        "name": "projectId",
-                                        "type": "uint256"
-                                    },
-                                    {
-                                        "indexed": false,
-                                        "internalType": "uint256",
-                                        "name": "fee",
-                                        "type": "uint256"
-                                    },
-                                    {
-                                        "indexed": false,
-                                        "internalType": "uint256",
-                                        "name": "netAmount",
-                                        "type": "uint256"
-                                    }
-                                ],
-                                "name": "FeeDeducted",
-                                "type": "event"
-                            },
-                            {
-                                "anonymous": false,
-                                "inputs": [{
-                                        "indexed": false,
-                                        "internalType": "uint256",
-                                        "name": "projectId",
-                                        "type": "uint256"
-                                    },
-                                    {
-                                        "indexed": false,
-                                        "internalType": "address",
-                                        "name": "contractor",
-                                        "type": "address"
-                                    },
-                                    {
-                                        "indexed": false,
-                                        "internalType": "uint256",
-                                        "name": "amount",
-                                        "type": "uint256"
-                                    }
-                                ],
-                                "name": "ProjectAwarded",
-                                "type": "event"
-                            },
-                            {
-                                "anonymous": false,
-                                "inputs": [{
-                                        "indexed": false,
-                                        "internalType": "uint256",
-                                        "name": "projectId",
-                                        "type": "uint256"
-                                    },
-                                    {
-                                        "indexed": false,
-                                        "internalType": "address",
-                                        "name": "contractor",
-                                        "type": "address"
-                                    },
-                                    {
-                                        "indexed": false,
-                                        "internalType": "uint256",
-                                        "name": "amount",
-                                        "type": "uint256"
-                                    }
-                                ],
-                                "name": "ProjectCompleted",
-                                "type": "event"
-                            },
-                            {
-                                "inputs": [{
-                                    "internalType": "uint256",
-                                    "name": "newFee",
-                                    "type": "uint256"
-                                }],
-                                "name": "updateServiceFee",
-                                "outputs": [],
-                                "stateMutability": "nonpayable",
-                                "type": "function"
-                            },
-                            {
-                                "inputs": [],
-                                "name": "escrowWallet",
-                                "outputs": [{
+                                },
+                                {
                                     "internalType": "address",
-                                    "name": "",
+                                    "name": "contractor",
                                     "type": "address"
-                                }],
-                                "stateMutability": "view",
-                                "type": "function"
-                            },
-                            {
-                                "inputs": [],
-                                "name": "owner",
-                                "outputs": [{
-                                    "internalType": "address",
-                                    "name": "",
-                                    "type": "address"
-                                }],
-                                "stateMutability": "view",
-                                "type": "function"
-                            },
-                            {
-                                "inputs": [{
-                                    "internalType": "uint256",
-                                    "name": "",
-                                    "type": "uint256"
-                                }],
-                                "name": "projects",
-                                "outputs": [{
-                                        "internalType": "uint256",
-                                        "name": "id",
-                                        "type": "uint256"
-                                    },
-                                    {
-                                        "internalType": "address",
-                                        "name": "creator",
-                                        "type": "address"
-                                    },
-                                    {
-                                        "internalType": "address",
-                                        "name": "contractor",
-                                        "type": "address"
-                                    },
-                                    {
-                                        "internalType": "uint256",
-                                        "name": "amount",
-                                        "type": "uint256"
-                                    },
-                                    {
-                                        "internalType": "bool",
-                                        "name": "isCompleted",
-                                        "type": "bool"
-                                    },
-                                    {
-                                        "internalType": "bool",
-                                        "name": "isAwarded",
-                                        "type": "bool"
-                                    }
-                                ],
-                                "stateMutability": "view",
-                                "type": "function"
-                            },
-                            {
-                                "inputs": [],
-                                "name": "serviceFee",
-                                "outputs": [{
-                                    "internalType": "uint256",
-                                    "name": "",
-                                    "type": "uint256"
-                                }],
-                                "stateMutability": "view",
-                                "type": "function"
-                            }
-                        ];
-
-                        const contract = new web3.eth.Contract(contractABI, contractAddress);
-                        const accounts = await web3.eth.getAccounts();
-                        const account = accounts[0];
-
-                        console.log('ProjectId:', projectId);
-                        console.log('BidPrice:', bidPrice);
-                        console.log('ContractorId:', contractorId);
-                        console.log('Account:', account);
-
-                        // Validate input values
-                        if (!projectId || !contractorId || !bidPrice || !account || !
-                            contractorAddress) {
-                            alert('Missing required information to award the project.');
-                            return;
-                        }
-
-                        const transaction = await contract.methods.awardProject(projectId,
-                                contractorAddress)
-                            .send({
-                                from: account,
-                                value: web3.utils.toWei(bidPrice, 'ether')
-                            });
-
-                        console.log('Transaction:', transaction);
-                        alert("Project awarded successfully!");
-
-                        // Insert project awarding details into the database
-                        $.ajax({
-                            type: 'POST',
-                            url: 'award_project.php',
-                            data: {
-                                bid_id: projectId,
-                                contractor_id: contractorId
-                            },
-                            success: function(response) {
-                                try {
-                                    const data = JSON.parse(response);
-                                    if (data.success) {
-                                        location.reload();
-                                    } else {
-                                        alert("Error: " + data.message);
-                                    }
-                                } catch (e) {
-                                    alert("Failed to parse response from the server.");
                                 }
-                            },
-                            error: function(jqXHR, textStatus, errorThrown) {
-                                alert("Error: " + textStatus + " - " + errorThrown);
-                            }
-                        });
-                    } catch (error) {
-                        console.error('Error:', error);
-                        alert('Failed to award the project. Please try again.');
+                            ],
+                            "name": "awardProject",
+                            "outputs": [],
+                            "stateMutability": "payable",
+                            "type": "function"
+                        },
+                        {
+                            "inputs": [{
+                                "internalType": "uint256",
+                                "name": "projectId",
+                                "type": "uint256"
+                            }],
+                            "name": "completeProject",
+                            "outputs": [],
+                            "stateMutability": "nonpayable",
+                            "type": "function"
+                        },
+                        {
+                            "inputs": [],
+                            "stateMutability": "nonpayable",
+                            "type": "constructor"
+                        },
+                        {
+                            "anonymous": false,
+                            "inputs": [{
+                                    "indexed": false,
+                                    "internalType": "uint256",
+                                    "name": "projectId",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "indexed": false,
+                                    "internalType": "uint256",
+                                    "name": "fee",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "indexed": false,
+                                    "internalType": "uint256",
+                                    "name": "netAmount",
+                                    "type": "uint256"
+                                }
+                            ],
+                            "name": "FeeDeducted",
+                            "type": "event"
+                        },
+                        {
+                            "anonymous": false,
+                            "inputs": [{
+                                    "indexed": false,
+                                    "internalType": "uint256",
+                                    "name": "projectId",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "indexed": false,
+                                    "internalType": "address",
+                                    "name": "contractor",
+                                    "type": "address"
+                                },
+                                {
+                                    "indexed": false,
+                                    "internalType": "uint256",
+                                    "name": "amount",
+                                    "type": "uint256"
+                                }
+                            ],
+                            "name": "ProjectAwarded",
+                            "type": "event"
+                        },
+                        {
+                            "anonymous": false,
+                            "inputs": [{
+                                    "indexed": false,
+                                    "internalType": "uint256",
+                                    "name": "projectId",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "indexed": false,
+                                    "internalType": "address",
+                                    "name": "contractor",
+                                    "type": "address"
+                                },
+                                {
+                                    "indexed": false,
+                                    "internalType": "uint256",
+                                    "name": "amount",
+                                    "type": "uint256"
+                                }
+                            ],
+                            "name": "ProjectCompleted",
+                            "type": "event"
+                        },
+                        {
+                            "inputs": [{
+                                "internalType": "uint256",
+                                "name": "newFee",
+                                "type": "uint256"
+                            }],
+                            "name": "updateServiceFee",
+                            "outputs": [],
+                            "stateMutability": "nonpayable",
+                            "type": "function"
+                        },
+                        {
+                            "inputs": [],
+                            "name": "escrowWallet",
+                            "outputs": [{
+                                "internalType": "address",
+                                "name": "",
+                                "type": "address"
+                            }],
+                            "stateMutability": "view",
+                            "type": "function"
+                        },
+                        {
+                            "inputs": [],
+                            "name": "owner",
+                            "outputs": [{
+                                "internalType": "address",
+                                "name": "",
+                                "type": "address"
+                            }],
+                            "stateMutability": "view",
+                            "type": "function"
+                        },
+                        {
+                            "inputs": [{
+                                "internalType": "uint256",
+                                "name": "",
+                                "type": "uint256"
+                            }],
+                            "name": "projects",
+                            "outputs": [{
+                                    "internalType": "uint256",
+                                    "name": "id",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "creator",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "contractor",
+                                    "type": "address"
+                                },
+                                {
+                                    "internalType": "uint256",
+                                    "name": "amount",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "internalType": "bool",
+                                    "name": "isCompleted",
+                                    "type": "bool"
+                                },
+                                {
+                                    "internalType": "bool",
+                                    "name": "isAwarded",
+                                    "type": "bool"
+                                }
+                            ],
+                            "stateMutability": "view",
+                            "type": "function"
+                        },
+                        {
+                            "inputs": [],
+                            "name": "serviceFee",
+                            "outputs": [{
+                                "internalType": "uint256",
+                                "name": "",
+                                "type": "uint256"
+                            }],
+                            "stateMutability": "view",
+                            "type": "function"
+                        }
+                    ];
+
+                    const contract = new web3.eth.Contract(contractABI, contractAddress);
+                    const accounts = await web3.eth.getAccounts();
+                    const account = accounts[0];
+
+                    console.log('ProjectId:', projectId);
+                    console.log('BidPrice:', bidPrice);
+                    console.log('ContractorId:', contractorId);
+                    console.log('Account:', account);
+
+                    // Validate input values
+                    if (!projectId || !contractorId || !bidPrice || !account || !
+                        contractorAddress) {
+                        alert('Missing required information to award the project.');
+                        console.log({
+                            projectId,
+                            bidPrice,
+                            contractorId,
+                            account,
+                            contractorAddress
+                        }); // Console log missing values
+                        return;
                     }
-                } else {
-                    alert('Please install MetaMask to proceed.');
+
+                    const transaction = await contract.methods.awardProject(projectId,
+                            contractorAddress)
+                        .send({
+                            from: account,
+                            value: web3.utils.toWei(bidPrice, 'ether')
+                        });
+
+                    console.log('Transaction:', transaction);
+                    alert("Project awarded successfully!");
+
+                    // Insert project awarding details into the database
+                    $.ajax({
+                        type: 'POST',
+                        url: 'award_project.php',
+                        data: {
+                            bid_id: projectId,
+                            contractor_id: contractorId
+                        },
+                        success: function(response) {
+                            try {
+                                const data = JSON.parse(response);
+                                if (data.success) {
+                                    location.reload();
+                                } else {
+                                    alert("Error: " + data.message);
+                                }
+                            } catch (e) {
+                                alert("Failed to parse response from the server.");
+                            }
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                            alert("Error: " + textStatus + " - " + errorThrown);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('Failed to award the project. Please try again.');
                 }
-            });
+            } else {
+                alert('Please install MetaMask to proceed.');
+            }
         });
+    });
     </script>
 </body>
 

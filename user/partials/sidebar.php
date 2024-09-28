@@ -63,11 +63,11 @@
             </ul>
         </li>
         <li>
-            <a href="message.php">
+            <!-- <a href="message.php">
                 <div class="parent-icon"><i class='bx bx-message'></i>
                 </div>
                 <div class="menu-title">Chat / Message</div>
-            </a>
+            </a> -->
         </li>
         <li>
             <a href="profile.php">
