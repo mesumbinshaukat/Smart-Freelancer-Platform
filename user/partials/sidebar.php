@@ -1,7 +1,8 @@
 <div class="sidebar-wrapper" data-simplebar="true">
     <div class="sidebar-header">
         <div>
-            <img src="assets/images/logo-icon.png" class="logo-icon" alt="logo icon">
+            <img src="../logos/Brown_Elegant_Logo_Lawyer_Logo__6_-removebg-preview.png" class="logo-icon"
+                alt="logo icon">
         </div>
         <div>
             <h4 class="logo-text">Smart Contractor</h4>

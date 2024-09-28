@@ -8,21 +8,36 @@ if (!isset($_COOKIE["login_type"]) || !isset($_COOKIE["login_checker"])) {
     exit();
 }
 
-if (isset($_POST["submit"])) {
-    $name = htmlspecialchars($_POST["niche"]);
-    $sql = "INSERT INTO `tbl_niche` (`cat_name`) VALUES (?)";
-    $stmt = $con->prepare($sql);
-    $stmt->bind_param("s", $name);
-    if ($stmt->execute()) {
-        $_SESSION["success"] = "Niche created successfully";
-        header("location:create_niche.php");
-        exit();
-    } else {
-        $_SESSION["error"] = "Something went wrong";
-        header("location:create_niche.php");
-    }
+// Fetch niche data for editing
+if (isset($_GET['edit_id'])) {
+    $niche_id = intval($_GET['edit_id']);
+    $niche_query = "SELECT * FROM tbl_niche WHERE id = ?";
+    $stmt = $con->prepare($niche_query);
+    $stmt->bind_param("i", $niche_id);
+    $stmt->execute();
+    $niche_result = $stmt->get_result();
+    $niche = $niche_result->fetch_assoc();
+} else {
+    $_SESSION["error"] = "No niche selected for editing";
+    header("location:edit_niche.php");
+    exit();
 }
 
+// Handle form submission for niche update
+if (isset($_POST["update"])) {
+    $niche_name = htmlspecialchars($_POST["niche"]);
+    $update_query = "UPDATE tbl_niche SET cat_name = ? WHERE id = ?";
+    $stmt = $con->prepare($update_query);
+    $stmt->bind_param("si", $niche_name, $niche_id);
+
+    if ($stmt->execute()) {
+        $_SESSION["success"] = "Niche updated successfully";
+    } else {
+        $_SESSION["error"] = "Failed to update niche";
+    }
+    header("location:edit_niche.php");
+    exit();
+}
 ?>
 
 <!doctype html>
@@ -54,7 +69,7 @@ if (isset($_POST["submit"])) {
                             <ol class="breadcrumb mb-0 p-0">
                                 <li class="breadcrumb-item"><a href="index.php"><i class="bx bx-home-alt"></i></a>
                                 </li>
-                                <li class="breadcrumb-item active" aria-current="page">Add Niches</li>
+                                <li class="breadcrumb-item active" aria-current="page">Edit Niche</li>
                             </ol>
                         </nav>
                     </div>
@@ -63,17 +78,19 @@ if (isset($_POST["submit"])) {
                 <!--end breadcrumb-->
                 <div class="row">
                     <div class="col-xl-9 mx-auto">
-                        <h6 class="mb-0 text-uppercase">Create Niche</h6>
+                        <h6 class="mb-0 text-uppercase">Edit Niche</h6>
                         <hr />
                         <form method="post" class="row g-3">
                             <div class="card">
                                 <div class="card-body">
                                     <input class="form-control form-control-lg mb-3" type="text"
-                                        placeholder="Niche Name" name="niche" required>
+                                        placeholder="Niche Name" name="niche"
+                                        value="<?php echo htmlspecialchars($niche['cat_name']); ?>" required>
                                 </div>
                             </div>
 
-                            <button type="submit" class="btn btn-primary" name="submit">Add Niche</button>
+                            <button type="submit" class="btn btn-primary" name="update">Update Niche</button>
+                            <a href="edit_niche.php" class="btn btn-secondary">Back to Niche List</a>
                         </form>
 
                     </div>

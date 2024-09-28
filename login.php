@@ -22,8 +22,21 @@ if (isset($_POST["submit"])) {
     $email = filter_input(INPUT_POST, "email", FILTER_SANITIZE_EMAIL);
     $password = $_POST["password"];
 
-    $sql = "SELECT * FROM `tbl_user` WHERE email = ?";
+    // Check if the user is banned
+    $ban_check_sql = "SELECT * FROM `tbl_banned_user` WHERE bann_user_id = (SELECT id FROM tbl_user WHERE email = ?)";
+    $ban_check_stmt = $con->prepare($ban_check_sql);
+    $ban_check_stmt->bind_param("s", $email);
+    $ban_check_stmt->execute();
+    $ban_check_result = $ban_check_stmt->get_result();
 
+    if ($ban_check_result->num_rows > 0) {
+        $_SESSION["error"] = "Your account has been banned. Please contact support.";
+        header("location:login.php");
+        exit();
+    }
+
+    // Proceed with login if not banned
+    $sql = "SELECT * FROM `tbl_user` WHERE email = ?";
     $stmt = $con->prepare($sql);
     $stmt->bind_param("s", $email);
     $stmt->execute();
